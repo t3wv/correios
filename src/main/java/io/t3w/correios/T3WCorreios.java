@@ -77,23 +77,13 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     public List<T3WCorreiosSroObjeto> rastrearObjetos(final Set<String> codigosObjetos) throws Exception {
-
         this.getLogger().debug("Rastreando objetos para usuario '{}', api token '{}' e cartão de postagem '{}': '{}'", this.userId, this.apiToken, this.cartaoPostagem, codigosObjetos);
-        final var bearerToken = this.requestBearerToken().getToken();
-        final var httpRequest = HttpRequest.newBuilder()
-                .uri(new URI("https://api.correios.com.br/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos))))
-                .GET()
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(bearerToken)))
-                .timeout(this.timeout)
-                .build();
-        final var response = this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
+        URI url = new URI("https://api.correios.com.br/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
+        final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             final var objetosJson = this.objectMapper.readTree(response.body());
             final List<T3WCorreiosSroObjeto> objetos = Arrays.stream(this.objectMapper.convertValue(objetosJson.get("objetos"), T3WCorreiosSroObjeto[].class)).toList();
-
             final var codigosInvalidos = objetos.stream().filter(o -> !o.isValido()).toList();
-
             if (!codigosInvalidos.isEmpty()) {
                 this.getLogger().warn("Codigos de objetos com erros: [{}]", String.join(", ", codigosInvalidos.stream().map(o -> o.getCodigo().concat(" - ").concat(o.getMensagem())).toList()));
             }
@@ -107,22 +97,17 @@ public class T3WCorreios implements T3WLoggable {
     public T3WCorreiosPrazo getPrazoServico(String codigoServico, String cepOrigem, String cepDestino) throws Exception {
         this.getLogger().debug("Solicitando prazo de entrega para o servico '{}' de '{}' para '{}'...", codigoServico, cepOrigem, cepDestino);
         final var bearerToken = this.requestBearerToken().getToken();
-        final var httpRequest = HttpRequest.newBuilder()
-                .uri(new URI("https://api.correios.com.br/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino)))
-                .GET()
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(bearerToken)))
-                .timeout(this.timeout)
-                .build();
-        final var response = this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
+        URI url = new URI("https://api.correios.com.br/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
+        final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrazo.class);
         } else {
-            throw new InvalidAttributesException("Requisição prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
+            throw new InvalidAttributesException("Verificação de prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
         }
     }
 
     public T3WCorreiosPreco getPrecoServico(String codigoServico, String cepOrigem, String cepDestino, double pesoEmKg, int formato, int comprimentoEmCm, int alturaEmCm, int larguraEmCm, int diametroEmCm, boolean maoPropria, double valorDeclarado, boolean avisoRecebimento) throws Exception {
+        this.getLogger().debug("Solicitando preço para envio de objeto...");
 
         final var servicosAdicionaisParameter = new StringBuilder();
         if (maoPropria || avisoRecebimento || valorDeclarado != 0) {
@@ -132,19 +117,23 @@ public class T3WCorreios implements T3WLoggable {
             servicosAdicionaisParameter.append(valorDeclarado!=0?(maoPropria || avisoRecebimento?",019":"019"):"");
         }
 
-        this.getLogger().debug("Solicitando prazo de entrega para o servico '{}' de '{}' para '{}'...", codigoServico, cepOrigem, cepDestino);
+        URI url = new URI((("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=33.33" + servicosAdicionaisParameter).formatted(codigoServico, cepDestino, cepOrigem, pesoEmKg*1000, formato, comprimentoEmCm, alturaEmCm, larguraEmCm, diametroEmCm, valorDeclarado)));
+        final var response = this.sendGetRequest(url);
+        if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
+            return this.objectMapper.readValue(response.body().replaceAll("(\"\\d+),(\\d+\")", "$1.$2"), T3WCorreiosPreco.class);
+        } else {
+            throw new InvalidAttributesException("Verificação de preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    private HttpResponse<String> sendGetRequest(URI url) throws Exception {
         final var bearerToken = this.requestBearerToken().getToken();
         final var httpRequest = HttpRequest.newBuilder()
-                .uri(new URI(("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=33.33" + servicosAdicionaisParameter).formatted(codigoServico, cepDestino, cepOrigem, pesoEmKg, formato, comprimentoEmCm, alturaEmCm, larguraEmCm, diametroEmCm, valorDeclarado)))
+                .uri(url)
                 .GET()
                 .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(bearerToken)))
                 .timeout(this.timeout)
                 .build();
-        final var response = this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
-            return this.objectMapper.readValue(response.body().replaceAll("(\"\\d+),(\\d+\")", "$1.$2"), T3WCorreiosPreco.class);
-        } else {
-            throw new InvalidAttributesException("Requisição preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
-        }
+        return this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
     }
 }
