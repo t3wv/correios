@@ -1,0 +1,32 @@
+package io.t3w.correios.preco.enums;
+
+public enum InformacaoAdicional {
+    LOB_ERP ,
+    LIMITE_MAX_TARIFACAO_ERP    ,
+    VALOR_PARAMETRO_KILO_ADICIONAL_ERP  ,
+    LOB_SGPB    ,
+    NU_PROPOSTA ,
+    CO_MODELO   ,
+    CO_SIMILARIDADE ,
+    IN_EXIGENCIA_CEP_DESTINO    ,
+    CO_AGRUPADOR    ,
+    TIPO_AGRUPADOR  ,
+    NU_CORREDOR_ORIGEM  ,
+    NU_CORREDOR_DESTINO ,
+    NU_TABELA_FATOR ,
+    NU_LINHA_FATOR  ,
+    NU_COLUNA_FATOR ,
+    NO_COLUNA_FATOR ,
+    CLASSIFICACAO_COLUNA    ,
+    NU_COMBO    ,
+    NU_VARIACAO ,
+    VL_PRECO_BASE   ,
+    FATOR_FAIXA ,
+    FATOR_CADA_ADICIONAL    ,
+    QT_EXCESSO  ,
+    NO_PRODUTO  ,
+    TP_TARIFACAO_ERP    ,
+    IN_CORREDOR_FAIXA_CEP_SGPB  ,
+    IN_PRECIFICACAO_SGPB    ,
+    VL_TAXA_EXTRA
+}
