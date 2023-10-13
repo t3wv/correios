@@ -1,4 +1,4 @@
-package io.t3w.correios.sro_rastro;
+package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

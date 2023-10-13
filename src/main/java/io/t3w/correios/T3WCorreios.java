@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.t3w.correios.prazo.T3WCorreiosPrazo;
 import io.t3w.correios.preco.T3WCorreiosPreco;
-import io.t3w.correios.sro_rastro.T3WCorreiosSroObjeto;
+import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
 
-import javax.naming.directory.InvalidAttributesException;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -78,55 +77,48 @@ public class T3WCorreios implements T3WLoggable {
 
     public List<T3WCorreiosSroObjeto> rastrearObjetos(final Set<String> codigosObjetos) throws Exception {
         this.getLogger().debug("Rastreando objetos para usuario '{}', api token '{}' e cartão de postagem '{}': '{}'", this.userId, this.apiToken, this.cartaoPostagem, codigosObjetos);
-        URI url = new URI("https://api.correios.com.br/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
+        final var url = new URI("https://api.correios.com.br/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
-            final var objetosJson = this.objectMapper.readTree(response.body());
-            final List<T3WCorreiosSroObjeto> objetos = Arrays.stream(this.objectMapper.convertValue(objetosJson.get("objetos"), T3WCorreiosSroObjeto[].class)).toList();
-            final var codigosInvalidos = objetos.stream().filter(o -> !o.isValido()).toList();
-            if (!codigosInvalidos.isEmpty()) {
-                this.getLogger().warn("Codigos de objetos com erros: [{}]", String.join(", ", codigosInvalidos.stream().map(o -> o.getCodigo().concat(" - ").concat(o.getMensagem())).toList()));
-            }
-            return objetos;
-        } else {
-            throw new InvalidAttributesException("Requisição de rastreamento de objetos retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
+            return Arrays.asList(this.objectMapper.convertValue(this.objectMapper.readTree(response.body()).get("objetos"), T3WCorreiosSroObjeto[].class));
         }
+        throw new Exception("Requisição de rastreamento de objetos retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
     }
 
-
-    public T3WCorreiosPrazo getPrazoServico(String codigoServico, String cepOrigem, String cepDestino) throws Exception {
+    public T3WCorreiosPrazo calcularPrazo(final String codigoServico, final String cepOrigem, final String cepDestino) throws Exception {
         this.getLogger().debug("Solicitando prazo de entrega para o servico '{}' de '{}' para '{}'...", codigoServico, cepOrigem, cepDestino);
-        final var bearerToken = this.requestBearerToken().getToken();
-        URI url = new URI("https://api.correios.com.br/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
+        final var url = new URI("https://api.correios.com.br/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrazo.class);
-        } else {
-            throw new InvalidAttributesException("Verificação de prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
         }
+        throw new Exception("Verificação de prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
     }
 
-    public T3WCorreiosPreco getPrecoServico(String codigoServico, String cepOrigem, String cepDestino, double pesoEmKg, int formato, int comprimentoEmCm, int alturaEmCm, int larguraEmCm, int diametroEmCm, boolean maoPropria, double valorDeclarado, boolean avisoRecebimento) throws Exception {
+    public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, double pesoEmKg, int formato, int comprimentoEmCm, int alturaEmCm, int larguraEmCm, int diametroEmCm, boolean maoPropria, double valorDeclarado, boolean avisoRecebimento) throws Exception {
         this.getLogger().debug("Solicitando preço para envio de objeto...");
 
+        //TODO: verificar se existe enum dos servicos adicionais e passar isso como uma lista para este metodo
         final var servicosAdicionaisParameter = new StringBuilder();
         if (maoPropria || avisoRecebimento || valorDeclarado != 0) {
             servicosAdicionaisParameter.append("&servicosAdicionais=");
-            servicosAdicionaisParameter.append(avisoRecebimento?"001":"");
-            servicosAdicionaisParameter.append(maoPropria?(avisoRecebimento?",002":"002"):"");
-            servicosAdicionaisParameter.append(valorDeclarado!=0?(maoPropria || avisoRecebimento?",019":"019"):"");
+            servicosAdicionaisParameter.append(avisoRecebimento ? "001" : "");
+            servicosAdicionaisParameter.append(maoPropria ? (avisoRecebimento ? ",002" : "002") : "");
+            servicosAdicionaisParameter.append(valorDeclarado != 0 ? (maoPropria || avisoRecebimento ? ",019" : "019") : "");
         }
 
-        URI url = new URI((("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=33.33" + servicosAdicionaisParameter).formatted(codigoServico, cepDestino, cepOrigem, pesoEmKg*1000, formato, comprimentoEmCm, alturaEmCm, larguraEmCm, diametroEmCm, valorDeclarado)));
+        //TODO: passar o peso para gramas, tirar o valor declarado do hardcoded, padronizar adicao de parametros a url
+        final var url = new URI((("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=33.33" + servicosAdicionaisParameter).formatted(codigoServico, cepDestino, cepOrigem, pesoEmKg * 1000, formato, comprimentoEmCm, alturaEmCm, larguraEmCm, diametroEmCm, valorDeclarado)));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
+            //TODO: analisar json de retorno e parsear os valores de forma correta
             return this.objectMapper.readValue(response.body().replaceAll("(\"\\d+),(\\d+\")", "$1.$2"), T3WCorreiosPreco.class);
-        } else {
-            throw new InvalidAttributesException("Verificação de preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
+        throw new Exception("Verificação de preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
+
     }
 
-    private HttpResponse<String> sendGetRequest(URI url) throws Exception {
+    private HttpResponse<String> sendGetRequest(final URI url) throws Exception {
         final var bearerToken = this.requestBearerToken().getToken();
         final var httpRequest = HttpRequest.newBuilder()
                 .uri(url)

@@ -1,4 +1,4 @@
-package io.t3w.correios.sro_rastro;
+package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,7 +38,6 @@ public class T3WCorreiosSroObjeto {
 
     @JsonProperty("eventos")
     private List<T3WCorreiosSroObjetoEvento> eventos;
-
 
     public String getCodigo() {
         return codigo;
@@ -127,9 +126,10 @@ public class T3WCorreiosSroObjeto {
         this.tipoPostal = new ObjectMapper().convertValue(tipoPostal, T3WCorreiosSroTipoPostal.class);
     }
 
+    //TODO: revisar criacao dos objectmappers
     @JsonProperty("eventos")
     private void unpackEventos(ArrayNode eventos){
-        final var x = new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(eventos, T3WCorreiosSroObjetoEvento[].class);
+        this.eventos = Arrays.stream(new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(eventos, T3WCorreiosSroObjetoEvento[].class)).toList();
     }
 
 }

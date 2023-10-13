@@ -1,4 +1,4 @@
-package io.t3w.correios.sro_rastro;
+package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -23,23 +23,6 @@ public class T3WCorreiosSroEndereco {
 
     private String telefone;
 
-    public T3WCorreiosSroEndereco() {}
-    public T3WCorreiosSroEndereco(String cidade, String uf) {
-        this.cidade = cidade;
-        this.uf = uf;
-    }
-
-    public T3WCorreiosSroEndereco(String cep, String logradouro, String complemento, String numero, String bairro, String cidade, String uf, String pais, String telefone) {
-        this.cep = cep;
-        this.logradouro = logradouro;
-        this.complemento = complemento;
-        this.numero = numero;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.uf = uf;
-        this.pais = pais;
-        this.telefone = telefone;
-    }
 
     public String getCep() {
         return cep;
