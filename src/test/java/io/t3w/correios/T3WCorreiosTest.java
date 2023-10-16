@@ -1,12 +1,16 @@
 package io.t3w.correios;
 
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoTipoObjeto;
 import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.naming.directory.InvalidAttributesException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +54,7 @@ class T3WCorreiosTest {
 
         assertNotNull(objetosComErrosRastreamentos);
         assertNotNull(objetosSohErrosRastreamentos);
-        assertTrue(objetosComErrosRastreamentos.stream().filter(T3WCorreiosSroObjeto::isValido).count() != objetosCodigosComErrosList.size());
+        assertNotEquals(objetosComErrosRastreamentos.stream().filter(T3WCorreiosSroObjeto::isValido).count(), objetosCodigosComErrosList.size());
         assertTrue(objetosSohErrosRastreamentos.stream().noneMatch(T3WCorreiosSroObjeto::isValido));
         assertThrows(Exception.class, () -> CORREIOS.rastrearObjetos(objetosCodigosEmptyList));
     }
@@ -82,13 +86,13 @@ class T3WCorreiosTest {
 
     @Test
     void testRequestPrecoServico() throws Exception {
-        final var preco = CORREIOS.calcularPreco("03220","88010100","88101001",2.35,2,10,10,10,10,true,33.33,true);
+        final var preco = CORREIOS.calcularPreco("03220","88010100","69999999",30000, T3WCorreiosPrecoTipoObjeto.valueOfCodigo("2"),70,70,60,0, new BigDecimal("330.33"), Collections.singleton(T3WCorreiosPrecoServicoAdicional.AVISO_RECEBIMENTO));
         assertNotNull(preco);
-        assertTrue(preco.getPrecoFinal() > 0);
+        assertTrue(preco.getPrecoFinal().signum() > 0);
     }
 
     @Test
     void testRequestPrecoServicoErros() throws Exception {
-        assertThrows(Exception.class, () -> CORREIOS.calcularPreco("3220", "88010", "3", 1, 33, 12341234, 28347, 23847, 238472, true, 4, false));
+        assertThrows(Exception.class, () -> CORREIOS.calcularPreco("3220", "88010", "3", 1, T3WCorreiosPrecoTipoObjeto.valueOfCodigo("1"), 12341234, 28347, 23847, 238472, new BigDecimal("4.00"), Collections.emptySet()));
     }
 }

@@ -2,12 +2,9 @@ package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class T3WCorreiosSroObjeto {
@@ -85,11 +82,11 @@ public class T3WCorreiosSroObjeto {
     }
 
     public String getModalidade() {
-        return formato;
+        return modalidade;
     }
 
     public T3WCorreiosSroObjeto setModalidade(String modalidade) {
-        this.formato = modalidade;
+        this.modalidade = modalidade;
         return this;
     }
 
@@ -111,25 +108,12 @@ public class T3WCorreiosSroObjeto {
         return this;
     }
 
-    public String getMensagem(){
+    public String getMensagem() {
         return this.mensagem;
     }
 
-    public boolean isValido(){
-      return this.mensagem == null;
-    };
-
-
-    // todo: ver melhor forma de fazer isso
-    @JsonProperty("tipoPostal")
-    private void unpackTipoPostal(Map<String, String> tipoPostal){
-        this.tipoPostal = new ObjectMapper().convertValue(tipoPostal, T3WCorreiosSroTipoPostal.class);
-    }
-
-    //TODO: revisar criacao dos objectmappers
-    @JsonProperty("eventos")
-    private void unpackEventos(ArrayNode eventos){
-        this.eventos = Arrays.stream(new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(eventos, T3WCorreiosSroObjetoEvento[].class)).toList();
+    public boolean isValido() {
+        return this.mensagem == null;
     }
 
 }

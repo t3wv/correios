@@ -1,6 +1,6 @@
 package io.t3w.correios.preco.enums;
 
-public enum TipoBeneficio {
+public enum T3WCorreiosPrecoTipoBeneficio {
     DP(1,""),
     DF(2,""),
     BP(3,""),
@@ -10,7 +10,7 @@ public enum TipoBeneficio {
     private final int codigo;
     private final String tipo;
 
-    TipoBeneficio(int codigo, String tipo){
+    T3WCorreiosPrecoTipoBeneficio(int codigo, String tipo){
         this.codigo = codigo;
         this.tipo = tipo;
     }

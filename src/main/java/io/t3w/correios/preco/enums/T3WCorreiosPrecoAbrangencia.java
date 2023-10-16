@@ -1,13 +1,13 @@
 package io.t3w.correios.preco.enums;
 
-public enum Abrangencia {
+public enum T3WCorreiosPrecoAbrangencia {
     O(1,"Oferta"),
     N(2,"Negociação");
 
     private final int codigo;
     private final String descricao;
 
-    Abrangencia(int codigo, String descricao){
+    T3WCorreiosPrecoAbrangencia(int codigo, String descricao){
         this.codigo = codigo;
         this.descricao = descricao;
     }

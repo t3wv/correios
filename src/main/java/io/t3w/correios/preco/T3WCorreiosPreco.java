@@ -2,7 +2,8 @@ package io.t3w.correios.preco;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.t3w.correios.preco.enums.InformacaoAdicional;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoInformacaoAdicional;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,21 +17,21 @@ public class T3WCorreiosPreco {
     private String numero;
 
     @JsonProperty("pcBase")
-    private double precoBase;
+    private BigDecimal precoBase;
 
     @JsonProperty("pcBaseGeral")
-    private double precoBaseGeral;
+    private BigDecimal precoBaseGeral;
     @JsonProperty("peVariacao")
-    private double percentualVariacao;
+    private BigDecimal percentualVariacao;
 
     @JsonProperty("pcReferencia")
-    private double precoReferencia;
+    private BigDecimal precoReferencia;
 
     @JsonProperty("beneficios")
     private List<T3WCorreiosPrecoBeneficios> beneficios; //components/schemas/BeneficioResponse
 
     @JsonProperty("vlBaseCalculoImposto")
-    private double valorBaseCalculoImposto;
+    private BigDecimal valorBaseCalculoImposto;
 
     @JsonProperty("nuRequisicao")
     private String numeroRequisicao;
@@ -39,72 +40,72 @@ public class T3WCorreiosPreco {
     private boolean inPesoCubico;
 
     @JsonProperty("psCobrado")
-    private double pesoCobrado;
+    private BigDecimal pesoCobrado;
 
     @JsonProperty("servicoAdicional")
-    private List<T3WCorreiosPrecoServicoAdicional> servicosAdicionais; // components/schemas/PrecoServicoAdicional
+    private List<T3WCorreiosPrecoServicoAdicional> servicosAdicionais;
 
     @JsonProperty("peAdValorem")
-    private double percentualAdValorem;
+    private BigDecimal percentualAdValorem;
 
     @JsonProperty("vlSeguroAutomatico")
-    private double valorSeguroAutomatico;
+    private BigDecimal valorSeguroAutomatico;
 
     @JsonProperty("qtAdicional")
     private String quantidadeAdicional;
 
     @JsonProperty("pcFaixa")
-    private double precoFaixa;
+    private BigDecimal precoFaixa;
 
     @JsonProperty("pcCadaAdicional")
-    private double precoCadaAdicional;
+    private BigDecimal precoCadaAdicional;
 
     @JsonProperty("pcTotalAdicional")
-    private double precoTotalAdicional;
+    private BigDecimal precoTotalAdicional;
 
     @JsonProperty("pcFaixaVariacao")
-    private double precoFaixaVariacao;
+    private BigDecimal precoFaixaVariacao;
 
     @JsonProperty("pcCadaAdicionalVariacao")
-    private double precoCadaAdicionalVariacao;
+    private BigDecimal precoCadaAdicionalVariacao;
 
     @JsonProperty("pcTotalAdicionalVariacao")
-    private double precoTotalAdicionalVariacao;
+    private BigDecimal precoTotalAdicionalVariacao;
 
     @JsonProperty("vlTotalDescVariacao")
-    private double valorTotalDescontosVariacao;
+    private BigDecimal valorTotalDescontosVariacao;
 
     @JsonProperty("vlTotalBeneficios")
-    private double valorTotalBeneficios;
+    private BigDecimal valorTotalBeneficios;
 
     @JsonProperty("pcProduto")
-    private double precoProduto;
+    private BigDecimal precoProduto;
 
     @JsonProperty("pcTotalServicosAdicionais")
-    private double precoTotalServicosAdicionais;
+    private BigDecimal precoTotalServicosAdicionais;
 
     @JsonProperty("pcFinal")
-    private double precoFinal;
+    private BigDecimal precoFinal;
 
     @JsonProperty("txErro")
     private String txErro;
 
     @JsonProperty("infoAdicional")
-    private List<InformacaoAdicional> informacoesAdicionais; //components/schemas/InfoAdicionalResponse
+    private List<T3WCorreiosPrecoInformacaoAdicional> informacoesAdicionais;
 
     @JsonProperty("nomeProduto")
     private String nomeProduto;
 
     @JsonProperty("peIsencaoArmazenagem")
-    private double percentualIsencaoServicosArmazenagem;
+    private BigDecimal percentualIsencaoServicosArmazenagem;
 
     @JsonProperty("taxaExtra")
-    private List<T3WCorreiosPrecoTaxaExtra> taxaExtra; //components/schemas/TaxaExtraResponse
+    private List<T3WCorreiosPrecoTaxaExtra> taxaExtra;
 
 
     public T3WCorreiosPreco() {}
 
-    public T3WCorreiosPreco(String codigo, String numero, double precoBase, double precoBaseGeral, double percentualVariacao, double precoReferencia, List<T3WCorreiosPrecoBeneficios> beneficios, double valorBaseCalculoImposto, String numeroRequisicao, boolean inPesoCubico, double pesoCobrado, List<T3WCorreiosPrecoServicoAdicional> servicosAdicionais, double percentualAdValorem, double valorSeguroAutomatico, String quantidadeAdicional, double precoFaixa, double precoCadaAdicional, double precoTotalAdicional, double precoFaixaVariacao, double precoCadaAdicionalVariacao, double precoTotalAdicionalVariacao, double valorTotalDescontosVariacao, double valorTotalBeneficios, double precoProduto, double precoTotalServicosAdicionais, double precoFinal, String txErro, List<InformacaoAdicional> informacoesAdicionais, String nomeProduto, double percentualIsencaoServicosArmazenagem, List<T3WCorreiosPrecoTaxaExtra> taxaExtra) {
+    public T3WCorreiosPreco(String codigo, String numero, BigDecimal precoBase, BigDecimal precoBaseGeral, BigDecimal percentualVariacao, BigDecimal precoReferencia, List<T3WCorreiosPrecoBeneficios> beneficios, BigDecimal valorBaseCalculoImposto, String numeroRequisicao, boolean inPesoCubico, BigDecimal pesoCobrado, List<T3WCorreiosPrecoServicoAdicional> servicosAdicionais, BigDecimal percentualAdValorem, BigDecimal valorSeguroAutomatico, String quantidadeAdicional, BigDecimal precoFaixa, BigDecimal precoCadaAdicional, BigDecimal precoTotalAdicional, BigDecimal precoFaixaVariacao, BigDecimal precoCadaAdicionalVariacao, BigDecimal precoTotalAdicionalVariacao, BigDecimal valorTotalDescontosVariacao, BigDecimal valorTotalBeneficios, BigDecimal precoProduto, BigDecimal precoTotalServicosAdicionais, BigDecimal precoFinal, String txErro, List<T3WCorreiosPrecoInformacaoAdicional> informacoesAdicionais, String nomeProduto, BigDecimal percentualIsencaoServicosArmazenagem, List<T3WCorreiosPrecoTaxaExtra> taxaExtra) {
         this.codigo = codigo;
         this.numero = numero;
         this.precoBase = precoBase;
@@ -156,38 +157,38 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getPrecoBase() {
+    public BigDecimal getPrecoBase() {
         return precoBase;
     }
 
-    public T3WCorreiosPreco setPrecoBase(double precoBase) {
+    public T3WCorreiosPreco setPrecoBase(BigDecimal precoBase) {
         this.precoBase = precoBase;
         return this;
     }
 
-    public double getPrecoBaseGeral() {
+    public BigDecimal getPrecoBaseGeral() {
         return precoBaseGeral;
     }
 
-    public T3WCorreiosPreco setPrecoBaseGeral(double precoBaseGeral) {
+    public T3WCorreiosPreco setPrecoBaseGeral(BigDecimal precoBaseGeral) {
         this.precoBaseGeral = precoBaseGeral;
         return this;
     }
 
-    public double getPercentualVariacao() {
+    public BigDecimal getPercentualVariacao() {
         return percentualVariacao;
     }
 
-    public T3WCorreiosPreco setPercentualVariacao(double percentualVariacao) {
+    public T3WCorreiosPreco setPercentualVariacao(BigDecimal percentualVariacao) {
         this.percentualVariacao = percentualVariacao;
         return this;
     }
 
-    public double getPrecoReferencia() {
+    public BigDecimal getPrecoReferencia() {
         return precoReferencia;
     }
 
-    public T3WCorreiosPreco setPrecoReferencia(double precoReferencia) {
+    public T3WCorreiosPreco setPrecoReferencia(BigDecimal precoReferencia) {
         this.precoReferencia = precoReferencia;
         return this;
     }
@@ -201,11 +202,11 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getValorBaseCalculoImposto() {
+    public BigDecimal getValorBaseCalculoImposto() {
         return valorBaseCalculoImposto;
     }
 
-    public T3WCorreiosPreco setValorBaseCalculoImposto(double valorBaseCalculoImposto) {
+    public T3WCorreiosPreco setValorBaseCalculoImposto(BigDecimal valorBaseCalculoImposto) {
         this.valorBaseCalculoImposto = valorBaseCalculoImposto;
         return this;
     }
@@ -234,11 +235,11 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getPesoCobrado() {
+    public BigDecimal getPesoCobrado() {
         return pesoCobrado;
     }
 
-    public T3WCorreiosPreco setPesoCobrado(double pesoCobrado) {
+    public T3WCorreiosPreco setPesoCobrado(BigDecimal pesoCobrado) {
         this.pesoCobrado = pesoCobrado;
         return this;
     }
@@ -252,21 +253,21 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getPercentualAdValorem() {
+    public BigDecimal getPercentualAdValorem() {
         return percentualAdValorem;
     }
 
-    public T3WCorreiosPreco setPercentualAdValorem(double percentualAdValorem) {
+    public T3WCorreiosPreco setPercentualAdValorem(BigDecimal percentualAdValorem) {
         this.percentualAdValorem = percentualAdValorem;
         return this;
     }
 
 
-    public double getValorSeguroAutomatico() {
+    public BigDecimal getValorSeguroAutomatico() {
         return valorSeguroAutomatico;
     }
 
-    public T3WCorreiosPreco setValorSeguroAutomatico(double valorSeguroAutomatico) {
+    public T3WCorreiosPreco setValorSeguroAutomatico(BigDecimal valorSeguroAutomatico) {
         this.valorSeguroAutomatico = valorSeguroAutomatico;
         return this;
     }
@@ -281,101 +282,101 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getPrecoFaixa() {
+    public BigDecimal getPrecoFaixa() {
         return precoFaixa;
     }
 
-    public T3WCorreiosPreco setPrecoFaixa(double precoFaixa) {
+    public T3WCorreiosPreco setPrecoFaixa(BigDecimal precoFaixa) {
         this.precoFaixa = precoFaixa;
         return this;
     }
 
-    public double getPrecoCadaAdicional() {
+    public BigDecimal getPrecoCadaAdicional() {
         return precoCadaAdicional;
     }
 
-    public T3WCorreiosPreco setPrecoCadaAdicional(double precoCadaAdicional) {
+    public T3WCorreiosPreco setPrecoCadaAdicional(BigDecimal precoCadaAdicional) {
         this.precoCadaAdicional = precoCadaAdicional;
         return this;
     }
 
-    public double getPrecoTotalAdicional() {
+    public BigDecimal getPrecoTotalAdicional() {
         return precoTotalAdicional;
     }
 
-    public T3WCorreiosPreco setPrecoTotalAdicional(double precoTotalAdicional) {
+    public T3WCorreiosPreco setPrecoTotalAdicional(BigDecimal precoTotalAdicional) {
         this.precoTotalAdicional = precoTotalAdicional;
         return this;
     }
 
-    public double getPrecoFaixaVariacao() {
+    public BigDecimal getPrecoFaixaVariacao() {
         return precoFaixaVariacao;
     }
 
-    public T3WCorreiosPreco setPrecoFaixaVariacao(double precoFaixaVariacao) {
+    public T3WCorreiosPreco setPrecoFaixaVariacao(BigDecimal precoFaixaVariacao) {
         this.precoFaixaVariacao = precoFaixaVariacao;
         return this;
     }
 
-    public double getPrecoCadaAdicionalVariacao() {
+    public BigDecimal getPrecoCadaAdicionalVariacao() {
         return precoCadaAdicionalVariacao;
     }
 
-    public T3WCorreiosPreco setPrecoCadaAdicionalVariacao(double precoCadaAdicionalVariacao) {
+    public T3WCorreiosPreco setPrecoCadaAdicionalVariacao(BigDecimal precoCadaAdicionalVariacao) {
         this.precoCadaAdicionalVariacao = precoCadaAdicionalVariacao;
         return this;
     }
 
-    public double getPrecoTotalAdicionalVariacao() {
+    public BigDecimal getPrecoTotalAdicionalVariacao() {
         return precoTotalAdicionalVariacao;
     }
 
-    public T3WCorreiosPreco setPrecoTotalAdicionalVariacao(double precoTotalAdicionalVariacao) {
+    public T3WCorreiosPreco setPrecoTotalAdicionalVariacao(BigDecimal precoTotalAdicionalVariacao) {
         this.precoTotalAdicionalVariacao = precoTotalAdicionalVariacao;
         return this;
     }
 
-    public double getValorTotalDescontosVariacao() {
+    public BigDecimal getValorTotalDescontosVariacao() {
         return valorTotalDescontosVariacao;
     }
 
-    public T3WCorreiosPreco setValorTotalDescontosVariacao(double valorTotalDescontosVariacao) {
+    public T3WCorreiosPreco setValorTotalDescontosVariacao(BigDecimal valorTotalDescontosVariacao) {
         this.valorTotalDescontosVariacao = valorTotalDescontosVariacao;
         return this;
     }
 
-    public double getValorTotalBeneficios() {
+    public BigDecimal getValorTotalBeneficios() {
         return valorTotalBeneficios;
     }
 
-    public T3WCorreiosPreco setValorTotalBeneficios(double valorTotalBeneficios) {
+    public T3WCorreiosPreco setValorTotalBeneficios(BigDecimal valorTotalBeneficios) {
         this.valorTotalBeneficios = valorTotalBeneficios;
         return this;
     }
 
-    public double getPrecoProduto() {
+    public BigDecimal getPrecoProduto() {
         return precoProduto;
     }
 
-    public T3WCorreiosPreco setPrecoProduto(double precoProduto) {
+    public T3WCorreiosPreco setPrecoProduto(BigDecimal precoProduto) {
         this.precoProduto = precoProduto;
         return this;
     }
 
-    public double getPrecoTotalServicosAdicionais() {
+    public BigDecimal getPrecoTotalServicosAdicionais() {
         return precoTotalServicosAdicionais;
     }
 
-    public T3WCorreiosPreco setPrecoTotalServicosAdicionais(double precoTotalServicosAdicionais) {
+    public T3WCorreiosPreco setPrecoTotalServicosAdicionais(BigDecimal precoTotalServicosAdicionais) {
         this.precoTotalServicosAdicionais = precoTotalServicosAdicionais;
         return this;
     }
 
-    public double getPrecoFinal() {
+    public BigDecimal getPrecoFinal() {
         return precoFinal;
     }
 
-    public T3WCorreiosPreco setPrecoFinal(double precoFinal) {
+    public T3WCorreiosPreco setPrecoFinal(BigDecimal precoFinal) {
         this.precoFinal = precoFinal;
         return this;
     }
@@ -389,11 +390,11 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public List<InformacaoAdicional> getInformacoesAdicionais() {
+    public List<T3WCorreiosPrecoInformacaoAdicional> getInformacoesAdicionais() {
         return informacoesAdicionais;
     }
 
-    public T3WCorreiosPreco setInformacoesAdicionais(List<InformacaoAdicional> informacoesAdicionais) {
+    public T3WCorreiosPreco setInformacoesAdicionais(List<T3WCorreiosPrecoInformacaoAdicional> informacoesAdicionais) {
         this.informacoesAdicionais = informacoesAdicionais;
         return this;
     }
@@ -407,11 +408,11 @@ public class T3WCorreiosPreco {
         return this;
     }
 
-    public double getPercentualIsencaoServicosArmazenagem() {
+    public BigDecimal getPercentualIsencaoServicosArmazenagem() {
         return percentualIsencaoServicosArmazenagem;
     }
 
-    public T3WCorreiosPreco setPercentualIsencaoServicosArmazenagem(double percentualIsencaoServicosArmazenagem) {
+    public T3WCorreiosPreco setPercentualIsencaoServicosArmazenagem(BigDecimal percentualIsencaoServicosArmazenagem) {
         this.percentualIsencaoServicosArmazenagem = percentualIsencaoServicosArmazenagem;
         return this;
     }

@@ -1,12 +1,21 @@
 package io.t3w.correios;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.t3w.correios.prazo.T3WCorreiosPrazo;
 import io.t3w.correios.preco.T3WCorreiosPreco;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoTipoObjeto;
 import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,10 +24,8 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Classe responsavel por concentrar as opções de serviços dos Correios.
@@ -28,7 +35,9 @@ public class T3WCorreios implements T3WLoggable {
     private Duration timeout;
     private final HttpClient client;
     private final ObjectMapper objectMapper;
-    private final String userId, apiToken, cartaoPostagem;
+    private final String userId;
+    private final String apiToken;
+    private final String cartaoPostagem;
     private T3WCorreiosBearerToken bearerToken;
 
     public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem) {
@@ -49,6 +58,16 @@ public class T3WCorreios implements T3WLoggable {
         this.timeout = Duration.ofSeconds(15);
         this.client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build();
         this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        this.objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
+        this.objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        this.objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        this.objectMapper.registerModule(new SimpleModule().addDeserializer(BigDecimal.class, new StdScalarDeserializer<>(BigDecimal.class) {
+            @Override
+            public BigDecimal deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                String text = p.getValueAsString().replace(',', '.');
+                return new BigDecimal(text);
+            }
+        }));
     }
 
     public T3WCorreios setTimeout(Duration timeout) {
@@ -95,35 +114,29 @@ public class T3WCorreios implements T3WLoggable {
         throw new Exception("Verificação de prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
     }
 
-    public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, double pesoEmKg, int formato, int comprimentoEmCm, int alturaEmCm, int larguraEmCm, int diametroEmCm, boolean maoPropria, double valorDeclarado, boolean avisoRecebimento) throws Exception {
-        this.getLogger().debug("Solicitando preço para envio de objeto...");
+    public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, int pesoGramas,T3WCorreiosPrecoTipoObjeto tipoObjeto, int comprimentoCm, int alturaCm, int larguraCm, int diametroCm, BigDecimal valorDeclarado, final Set<T3WCorreiosPrecoServicoAdicional> servicosAdicionais) throws Exception {
+        this.getLogger().debug("Solicitando preço para servico {}, origem {}, destino {}, peso {}g...", codigoServico, cepOrigem, cepDestino, pesoGramas);
 
-        //TODO: verificar se existe enum dos servicos adicionais e passar isso como uma lista para este metodo
-        final var servicosAdicionaisParameter = new StringBuilder();
-        if (maoPropria || avisoRecebimento || valorDeclarado != 0) {
-            servicosAdicionaisParameter.append("&servicosAdicionais=");
-            servicosAdicionaisParameter.append(avisoRecebimento ? "001" : "");
-            servicosAdicionaisParameter.append(maoPropria ? (avisoRecebimento ? ",002" : "002") : "");
-            servicosAdicionaisParameter.append(valorDeclarado != 0 ? (maoPropria || avisoRecebimento ? ",019" : "019") : "");
+        //se houver o valor declarado, tenho que adicionar nos servicos adicionais
+        final var servicosAdicionaisTratado = new HashSet<>(servicosAdicionais);
+        if (valorDeclarado != null && valorDeclarado.signum() != 0) {
+            servicosAdicionaisTratado.add(T3WCorreiosPrecoServicoAdicional.VALOR_DECLARADO);
         }
 
-        //TODO: passar o peso para gramas, tirar o valor declarado do hardcoded, padronizar adicao de parametros a url
-        final var url = new URI((("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=33.33" + servicosAdicionaisParameter).formatted(codigoServico, cepDestino, cepOrigem, pesoEmKg * 1000, formato, comprimentoEmCm, alturaEmCm, larguraEmCm, diametroEmCm, valorDeclarado)));
+        final var servicosAdicionaisCodigos = servicosAdicionaisTratado.stream().map(T3WCorreiosPrecoServicoAdicional::getCodigo).collect(Collectors.joining(","));
+        final var url = new URI("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%s&tpObjeto=%s&comprimento=%s&largura=%s&altura=%s&diametro=%s&vlDeclarado=%s&servicosAdicionais=%s".formatted(codigoServico, cepDestino, cepOrigem, pesoGramas, tipoObjeto.getCodigo(), comprimentoCm, alturaCm, larguraCm, diametroCm, valorDeclarado, servicosAdicionaisCodigos));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
-            //TODO: analisar json de retorno e parsear os valores de forma correta
-            return this.objectMapper.readValue(response.body().replaceAll("(\"\\d+),(\\d+\")", "$1.$2"), T3WCorreiosPreco.class);
+            return this.objectMapper.readValue(response.body(), T3WCorreiosPreco.class);
         }
         throw new Exception("Verificação de preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
-
     }
 
     private HttpResponse<String> sendGetRequest(final URI url) throws Exception {
-        final var bearerToken = this.requestBearerToken().getToken();
         final var httpRequest = HttpRequest.newBuilder()
                 .uri(url)
                 .GET()
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(bearerToken)))
+                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
                 .timeout(this.timeout)
                 .build();
         return this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());

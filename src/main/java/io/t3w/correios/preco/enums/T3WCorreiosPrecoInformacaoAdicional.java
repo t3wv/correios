@@ -1,6 +1,6 @@
 package io.t3w.correios.preco.enums;
 
-public enum InformacaoAdicional {
+public enum T3WCorreiosPrecoInformacaoAdicional {
     LOB_ERP ,
     LIMITE_MAX_TARIFACAO_ERP    ,
     VALOR_PARAMETRO_KILO_ADICIONAL_ERP  ,

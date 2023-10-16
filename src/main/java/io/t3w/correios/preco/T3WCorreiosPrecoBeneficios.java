@@ -2,8 +2,8 @@ package io.t3w.correios.preco;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.t3w.correios.preco.enums.Abrangencia;
-import io.t3w.correios.preco.enums.TipoBeneficio;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoAbrangencia;
+import io.t3w.correios.preco.enums.T3WCorreiosPrecoTipoBeneficio;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ public class T3WCorreiosPrecoBeneficios {
     @JsonProperty("codigo")
     private String codigo;
     @JsonProperty("tipoBeneficio")
-    private TipoBeneficio beneficio;
+    private T3WCorreiosPrecoTipoBeneficio beneficio;
     @JsonProperty("tipo")
     private String tipo;
     @JsonProperty("abrangencia")
-    private Abrangencia abrangencia;
+    private T3WCorreiosPrecoAbrangencia abrangencia;
     @JsonProperty("coPacote")
     private String codigoPacote;
     @JsonProperty("noPacote")
@@ -34,7 +34,7 @@ public class T3WCorreiosPrecoBeneficios {
 
     public T3WCorreiosPrecoBeneficios() {}
 
-    public T3WCorreiosPrecoBeneficios(String codigo, TipoBeneficio beneficio, String tipo, Abrangencia abrangencia, String codigoPacote, String nomePacote, boolean incondicional, List<T3WCorreiosPrecoCriterioFuncional> criterioFuncionalList, double valorBaseCalculoImposto, double percentual, double valor) {
+    public T3WCorreiosPrecoBeneficios(String codigo, T3WCorreiosPrecoTipoBeneficio beneficio, String tipo, T3WCorreiosPrecoAbrangencia abrangencia, String codigoPacote, String nomePacote, boolean incondicional, List<T3WCorreiosPrecoCriterioFuncional> criterioFuncionalList, double valorBaseCalculoImposto, double percentual, double valor) {
         this.codigo = codigo;
         this.beneficio = beneficio;
         this.tipo = tipo;
@@ -57,11 +57,11 @@ public class T3WCorreiosPrecoBeneficios {
         return this;
     }
 
-    public TipoBeneficio getBeneficio() {
+    public T3WCorreiosPrecoTipoBeneficio getBeneficio() {
         return beneficio;
     }
 
-    public T3WCorreiosPrecoBeneficios setBeneficio(TipoBeneficio beneficio) {
+    public T3WCorreiosPrecoBeneficios setBeneficio(T3WCorreiosPrecoTipoBeneficio beneficio) {
         this.beneficio = beneficio;
         return this;
     }
@@ -75,11 +75,11 @@ public class T3WCorreiosPrecoBeneficios {
         return this;
     }
 
-    public Abrangencia getAbrangencia() {
+    public T3WCorreiosPrecoAbrangencia getAbrangencia() {
         return abrangencia;
     }
 
-    public T3WCorreiosPrecoBeneficios setAbrangencia(Abrangencia abrangencia) {
+    public T3WCorreiosPrecoBeneficios setAbrangencia(T3WCorreiosPrecoAbrangencia abrangencia) {
         this.abrangencia = abrangencia;
         return this;
     }

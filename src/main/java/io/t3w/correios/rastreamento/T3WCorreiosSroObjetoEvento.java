@@ -2,8 +2,6 @@ package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +20,7 @@ public class T3WCorreiosSroObjetoEvento {
     @JsonProperty("descricao")
     private String descricao;
 
+    @JsonProperty("unidade")
     private T3wCorreiosSroUnidade unidade;
 
     public T3WCorreiosSroObjetoEvento(){}
@@ -77,10 +76,5 @@ public class T3WCorreiosSroObjetoEvento {
     public T3WCorreiosSroObjetoEvento setUnidade(T3wCorreiosSroUnidade unidade) {
         this.unidade = unidade;
         return this;
-    }
-
-    @JsonProperty("unidade")
-    private void unpackUnidade(ObjectNode unidade){
-        this.unidade = new ObjectMapper().convertValue(unidade, T3wCorreiosSroUnidade.class);
     }
 }
