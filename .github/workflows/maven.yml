@@ -41,6 +41,9 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/pom.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+        CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+        CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
