@@ -3,6 +3,7 @@ package io.t3w.correios.rastreamento;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -57,7 +58,7 @@ public class T3WCorreiosSroObjetoEvento {
     private T3WCorreiosSroPessoa destinatario;
 
     @JsonProperty("dtLimiteRetirada")
-    private LocalDateTime dataLimiteRetirada;
+    private LocalDate dataLimiteRetirada;
     @JsonProperty("comentario")
     private String comentario;
 
@@ -223,11 +224,11 @@ public class T3WCorreiosSroObjetoEvento {
         return this;
     }
 
-    public LocalDateTime getDataLimiteRetirada() {
+    public LocalDate getDataLimiteRetirada() {
         return dataLimiteRetirada;
     }
 
-    public T3WCorreiosSroObjetoEvento setDataLimiteRetirada(LocalDateTime dataLimiteRetirada) {
+    public T3WCorreiosSroObjetoEvento setDataLimiteRetirada(LocalDate dataLimiteRetirada) {
         this.dataLimiteRetirada = dataLimiteRetirada;
         return this;
     }
