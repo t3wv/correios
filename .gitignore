@@ -26,3 +26,4 @@ replay_pid*
 #diego
 .idea
 *.iml
+target/**

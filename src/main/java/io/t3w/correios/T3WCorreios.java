@@ -64,8 +64,7 @@ public class T3WCorreios implements T3WLoggable {
         this.objectMapper.registerModule(new SimpleModule().addDeserializer(BigDecimal.class, new StdScalarDeserializer<>(BigDecimal.class) {
             @Override
             public BigDecimal deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                String text = p.getValueAsString().replace(',', '.');
-                return new BigDecimal(text);
+                return new BigDecimal(p.getValueAsString().replace(',', '.'));
             }
         }));
     }
@@ -133,12 +132,9 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     private HttpResponse<String> sendGetRequest(final URI url) throws Exception {
-        final var httpRequest = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
+        return this.client.send(HttpRequest.newBuilder()
+                .uri(url).GET().timeout(this.timeout)
                 .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
-                .timeout(this.timeout)
-                .build();
-        return this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                .build(), HttpResponse.BodyHandlers.ofString());
     }
 }

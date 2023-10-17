@@ -60,7 +60,7 @@ class T3WCorreiosBearerToken {
 
     @Override
      public String toString() {
-        return "WMXCorreiosBearerToken{" +
+        return this.getClass().getSimpleName() + "{" +
                "ip='" + ip + '\'' +
                ", emissao=" + emissao +
                ", expiraEm=" + expiraEm +

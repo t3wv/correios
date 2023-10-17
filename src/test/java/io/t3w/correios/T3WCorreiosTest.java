@@ -4,10 +4,8 @@ import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoTipoObjeto;
 import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.naming.directory.InvalidAttributesException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -15,7 +13,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 class T3WCorreiosTest {
 
     private static T3WCorreios CORREIOS;
@@ -86,7 +83,7 @@ class T3WCorreiosTest {
 
     @Test
     void testRequestPrecoServico() throws Exception {
-        final var preco = CORREIOS.calcularPreco("03220","88010100","69999999",30000, T3WCorreiosPrecoTipoObjeto.valueOfCodigo("2"),70,70,60,0, new BigDecimal("330.33"), Collections.singleton(T3WCorreiosPrecoServicoAdicional.AVISO_RECEBIMENTO));
+        final var preco = CORREIOS.calcularPreco("03220", "88010100", "69999999", 30000, T3WCorreiosPrecoTipoObjeto.valueOfCodigo("2"), 70, 70, 60, 0, new BigDecimal("330.33"), Collections.singleton(T3WCorreiosPrecoServicoAdicional.AVISO_RECEBIMENTO));
         assertNotNull(preco);
         assertTrue(preco.getPrecoFinal().signum() > 0);
     }
