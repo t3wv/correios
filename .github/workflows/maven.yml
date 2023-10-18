@@ -38,7 +38,7 @@ jobs:
         CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy --batch-mode deploy
+      run: mvn --batch-mode deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
         CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
