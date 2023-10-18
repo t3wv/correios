@@ -13,6 +13,14 @@
         <url>https://t3w.io</url>
     </organization>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub ${env.GITHUB_ACTOR} Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}/correios</url>
+        </repository>
+    </distributionManagement>
+
     <!-- Repositorios -->
     <repositories>
         <repository>
