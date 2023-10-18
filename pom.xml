@@ -13,13 +13,32 @@
         <url>https://t3w.io</url>
     </organization>
 
-    <distributionManagement>
-        <repository>
+    <profiles>
+        <profile>
+            <id>central</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
             <id>github</id>
-            <name>GitHub ${env.GITHUB_ACTOR} Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}/correios</url>
-        </repository>
-    </distributionManagement>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub ${env.GITHUB_ACTOR} Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}/correios</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
 
     <!-- Repositorios -->
     <repositories>

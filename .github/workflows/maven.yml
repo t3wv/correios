@@ -46,15 +46,33 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+
+      #      - name: Set up JDK 17 to publish to Maven Central Repository
+      #        uses: actions/setup-java@v3
+      #        with:
+      #          java-version: '17'
+      #          distribution: 'temurin'
+      #          cache: maven
+      #          server-id: ossrh
+      #          server-username: MAVEN_USERNAME
+      #          server-password: MAVEN_PASSWORD
+      #      - name: Publish to the Maven Central Repository
+      #        run: mvn deploy --settings settings.xml -P central
+      #        env:
+      #          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      #          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+      #          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+      #          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+      #          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+
+      - name: Set up JDK 17 to publish to GitHub Packages
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy --settings settings.xml
+      - name: Publish to GitHub Packages
+        run: mvn deploy --settings settings.xml -P central
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
