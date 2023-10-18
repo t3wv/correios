@@ -12,8 +12,8 @@
             <repositories>
                 <repository>
                     <id>github</id>
-                    <name>GitHub ${env.GITHUB_ACTOR} Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}</url>
+                    <name>GitHub RafaelPereiraa Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/RafaelPereiraa</url>
                 </repository>
             </repositories>
         </profile>
