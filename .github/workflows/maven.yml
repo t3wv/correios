@@ -60,7 +60,7 @@ jobs:
           server-password: MAVEN_PASSWORD
       - name: Configure Git User
         run: |
-          git config user.email "rafaelsilvapereiraa@gmail.com"
+          git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Import GPG Key
@@ -79,12 +79,12 @@ jobs:
           fi
       - name: Release With Maven
         run: |
-          mvn -B -U -X -P ossrh release:prepare release:perform \ 
+          mvn -B -U release:prepare release:perform \ 
             javadoc:jar source:jar -s settings.xml \  
             -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} \ 
             -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \ 
             -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} \ 
-            deploy
+            deploy -P ossrh
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
