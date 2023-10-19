@@ -77,7 +77,7 @@ jobs:
           fi
       - name: Release With Maven
         run: |
-          mvn -B -U -P ci-cd release:prepare release:perform \ 
+          mvn -B -U -X -P ci-cd release:prepare release:perform \ 
             javadoc:jar source:jar -s settings.xml \  
             -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} \ 
             -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \ 
@@ -112,3 +112,16 @@ jobs:
           event-type: release-notes
           client-payload: '{"auto_release": "${{ env.auto_release }}", "artifact": "${{ env.artifact_name }}-${{ env.sha_short }}"}'
 
+      - name: Set up JDK 17 to publish to GitHub Packages
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Publish to GitHub Packages
+        run: mvn deploy --settings settings.xml -P github
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
