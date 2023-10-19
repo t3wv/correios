@@ -37,8 +37,8 @@
 
     <scm>
         <connection>scm:git:https://github.com/RafaelPereiraa/correios.git</connection>
-        <url>https://github.com/RafaelPereiraa/correios</url>
-        <developerConnection>scm:git:https://github.com/RafaelPereiraa/correios</developerConnection>
+        <url>https://github.com/RafaelPereiraa/correios.git</url>
+        <developerConnection>scm:git:https://github.com/RafaelPereiraa/correios.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
