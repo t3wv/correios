@@ -36,8 +36,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/RafaelPereiraa/correios.git</connection>
-        <developerConnection>scm:git:ssh://github.com/RafaelPereiraa/correios.git</developerConnection>
+        <connection>scm:git:git@github.com:RafaelPereiraa/correios.git</connection>
+        <developerConnection>scm:git:git@github.com:RafaelPereiraa/correios.git</developerConnection>
         <url>https://blablabla.com</url>
         <tag>HEAD</tag>
     </scm>

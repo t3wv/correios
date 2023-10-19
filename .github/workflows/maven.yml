@@ -79,12 +79,12 @@ jobs:
           fi
       - name: Release With Maven
         run: |
-          mvn -B -U release:prepare release:perform \ 
+          mvn -B -U -P ossrh release:prepare release:perform \ 
             javadoc:jar source:jar -s settings.xml \  
             -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} \ 
             -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \ 
             -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} \ 
-            deploy -P ossrh
+            deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
