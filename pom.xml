@@ -44,7 +44,7 @@
 
     <profiles>
         <profile>
-            <id>ci-cd</id>
+            <id>ossrh</id>
             <distributionManagement>
                 <snapshotRepository>
                     <id>ossrh</id>
