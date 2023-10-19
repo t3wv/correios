@@ -95,6 +95,9 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           AUTO_RELEASE_AFTER_CLOSE: ${{ env.auto_release }}
+          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
       - name: Artifact Name
         shell: bash
         run: |
