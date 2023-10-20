@@ -103,8 +103,10 @@ jobs:
       - name: Release With Maven
         run: |
           mvn 
+          -U
           --batch-mode
           --update-snapshots
+          -s settings.xml 
           -P ossrh
           versions:set
           -DgenerateBackupPoms=false
@@ -113,7 +115,6 @@ jobs:
           release:perform
           javadoc:jar
           source:jar
-          clean
           deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
