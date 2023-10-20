@@ -102,8 +102,7 @@ jobs:
 
       - name: Release With Maven
         run: |
-          #          mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}} -U -Possrh release:prepare release:perform javadoc:jar source:jar -s settings.xml deploy
-               mvn -s settings.xml -Possrh clean package verify source:jar javadoc:jar gpg:sign deploy --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          mvn -s settings.xml -Possrh clean package verify source:jar javadoc:jar gpg:sign --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
