@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token}}
         with:
           tag_name: ${{ env.release_version }}
-          release_name: Release ${{ maven.project.version }}
+          release_name: Release ${{ env.release_version }}
           body: ${{ steps.Changelog.outputs.changelog }}
           draft: false
           prerelease: false
