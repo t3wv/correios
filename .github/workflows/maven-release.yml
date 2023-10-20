@@ -49,8 +49,8 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: |
-          mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
-          mvn deploy --settings settings.xml -P github
+          mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
+          mvn -DskipTests deploy --settings settings.xml -P github
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
@@ -68,7 +68,6 @@ jobs:
           body: ${{ steps.Changelog.outputs.changelog }}
           draft: false
           prerelease: false
-
 
   deploy:
     needs: github-build-and-release
@@ -103,8 +102,8 @@ jobs:
 
       - name: Release With Maven
         run: |
-          mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
-          mvn -B deploy -U -Possrh release:prepare release:perform javadoc:jar source:jar -s settings.xml
+          mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
+          mvn -B -DskipTests deploy -U -Possrh release:prepare release:perform javadoc:jar source:jar -s settings.xml
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
@@ -116,6 +115,8 @@ jobs:
       - name: Artifact Name
         shell: bash
         run: |
+          echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+          ls -al ./target/
           echo "artifact_name=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> "$GITHUB_ENV"
 
       - name: Upload Artifact
