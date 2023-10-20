@@ -4,7 +4,7 @@
     <!--    <groupId>io.t3wio.t3w</groupId>-->
     <groupId>io.github.rafaelpereiraa</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
