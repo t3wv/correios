@@ -93,23 +93,11 @@ jobs:
           CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
           CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
-      - name: Artifact Name
-        shell: bash
-        run: |
-          echo "artifact_name=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> "$GITHUB_ENV"
-
-      - name: Define Jar Name
-        shell: bash
-        run: |
-          echo "{{ env.artifact_name }}"
-          ls -al ./target/
-          mv ./target/*.*:${{ env.artifact_name }}.jar ./target/${{ env.artifact_name }}.jar
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.artifact_name }}-${{ env.sha_short }}
-          path: ./target/${{ env.artifact_name }}.jar
+          name: ${{ project.build.finalName }}-${{ env.sha_short }}
+          path: ./target/${{ project.build.finalName }}.jar
 
       - name: Workflow Release Notes
         uses: peter-evans/repository-dispatch@v2
