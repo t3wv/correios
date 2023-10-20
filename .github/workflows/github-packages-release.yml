@@ -1,10 +1,7 @@
-name: Github Release
-
+name: Github Publish
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  release:
+    types: [ created ]
 
 
 jobs:
@@ -21,7 +18,9 @@ jobs:
           cache: maven
 
       - name: Publish to GitHub Packages
-        run: mvn deploy --settings settings.xml -P github
+        run: |
+          mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${GITHUB_REF##*/}
+          mvn deploy --settings settings.xml -P github
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
