@@ -102,7 +102,7 @@ jobs:
 
       - name: Release With Maven
         run: |
-          mvn -s settings.xml -Possrh clean package verify source:jar javadoc:jar gpg:sign --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} deploy
+          mvn -s settings.xml -Possrh clean package verify source:jar javadoc:jar gpg:sign --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ env.release_version }} deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
