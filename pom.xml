@@ -4,7 +4,7 @@
     <!--    <groupId>io.t3wio.t3w</groupId>-->
     <groupId>io.github.rafaelpereiraa</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -39,7 +39,7 @@
         <url>https://github.com/RafaelPereiraa/correios.git</url>
         <connection>scm:git:https://github.com/RafaelPereiraa/correios.git</connection>
         <developerConnection>scm:git:https://github.com/RafaelPereiraa/correios.git</developerConnection>
-        <tag>1.0.9</tag>
+        <tag>1.0.1</tag>
     </scm>
 
     <profiles>
