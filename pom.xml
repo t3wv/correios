@@ -4,7 +4,7 @@
     <!--    <groupId>io.t3wio.t3w</groupId>-->
     <groupId>io.github.rafaelpereiraa</groupId>
     <artifactId>correios</artifactId>
-    <version>0.0.10-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -138,6 +138,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <finalName>${project.name}-${maven.build.timestamp}</finalName>
+        <image.tag>${maven.build.timestamp}</image.tag>
     </properties>
 
     <!-- Configuracoes de build -->
