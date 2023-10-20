@@ -137,8 +137,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-        <finalName>${project.name}-${maven.build.timestamp}</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <image.tag>${maven.build.timestamp}</image.tag>
     </properties>
 
