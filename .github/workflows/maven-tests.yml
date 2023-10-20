@@ -53,13 +53,16 @@ jobs:
           CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
           CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
+      - name: Get Version to Release
+        run: echo "release_version=$(maven.project.version)">>"$GITHUB_ENV"
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ github.token}}
         with:
-          tag_name: ${{ maven.project.version }}
+          tag_name: ${{ env.release_version }}
           release_name: Release ${{ maven.project.version }}
           body: ${{ steps.Changelog.outputs.changelog }}
           draft: false
