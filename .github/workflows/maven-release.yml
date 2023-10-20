@@ -98,6 +98,9 @@ jobs:
           gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
+      - name: Get Version to Release
+        run: echo "release_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout)">>"$GITHUB_ENV"
+
       - name: Release With Maven
         run: |
           mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
