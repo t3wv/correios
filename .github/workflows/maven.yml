@@ -50,6 +50,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up JDK 17 to publish to GitHub Packages
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Publish to GitHub Packages
+        run: mvn deploy --settings settings.xml -P github
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+
+
       - name: Set up JDK 17 to publish to Maven Central Repository
         uses: actions/setup-java@v3
         with:
@@ -110,18 +127,3 @@ jobs:
         with:
           event-type: release-notes
           client-payload: '{"auto_release": "${{ env.auto_release }}", "artifact": "${{ env.artifact_name }}-${{ env.sha_short }}"}'
-
-      - name: Set up JDK 17 to publish to GitHub Packages
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Publish to GitHub Packages
-        run: mvn deploy --settings settings.xml -P github
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
-          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
-          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
