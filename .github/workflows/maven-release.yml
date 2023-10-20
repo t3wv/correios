@@ -34,7 +34,7 @@ jobs:
       - name: Release With Maven
         run: |
           mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${GITHUB_REF##*/}
-          mvn -B deploy -U -Possrh release:prepare release:perform javadoc:jar source:jar -s settings.xml
+          mvn -B deploy -U -Possrh javadoc:jar source:jar -s settings.xml
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
