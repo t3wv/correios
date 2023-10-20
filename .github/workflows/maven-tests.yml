@@ -46,7 +46,7 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: |
-          mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${GITHUB_REF##*/}
+          mvn -B versions:set -DgenerateBackupPoms=false
           mvn deploy --settings settings.xml -P github
         env:
           GITHUB_TOKEN: ${{ github.token }}
