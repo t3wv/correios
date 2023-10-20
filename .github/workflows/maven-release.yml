@@ -115,7 +115,6 @@ jobs:
       - name: Artifact Name
         shell: bash
         run: |
-          echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
           ls -al ./target/
           echo "artifact_name=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> "$GITHUB_ENV"
 
