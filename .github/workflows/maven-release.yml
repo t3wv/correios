@@ -102,7 +102,8 @@ jobs:
 
       - name: Release With Maven
         run: |
-          mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${env.release_version} release:prepare release:perform javadoc:jar source:jar -s settings.xml deploy
+          mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}} release:prepare release:perform javadoc:jar source:jar -s settings.xml deploy
+
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
