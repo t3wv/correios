@@ -54,7 +54,7 @@ jobs:
           CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
       - name: Get Version to Release
-        run: echo "release_version=$(maven.project.version)">>"$GITHUB_ENV"
+        run: echo "release_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout)">>"$GITHUB_ENV"
 
       - name: Create Release
         id: create_release
