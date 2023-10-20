@@ -4,7 +4,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-tests:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,8 +25,8 @@ jobs:
       - name: Update dependency graph
         uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
 
-  deploy:
-    needs: build-tests
+  github-build-and-release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -68,3 +68,62 @@ jobs:
           body: ${{ steps.Changelog.outputs.changelog }}
           draft: false
           prerelease: false
+
+
+  deploy:
+    needs: github-build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17 to publish to Maven Central Repository
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+          server-id: 'ossrh'
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Configure Git User
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5.0.0
+        with:
+          gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      - name: Release With Maven
+        run: |
+          mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${GITHUB_REF##*/}
+          mvn -B deploy -U -Possrh release:prepare release:perform javadoc:jar source:jar -s settings.xml
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          AUTO_RELEASE_AFTER_CLOSE: ${{ env.auto_release }}
+          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+
+      - name: Artifact Name
+        shell: bash
+        run: |
+          echo "artifact_name=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> "$GITHUB_ENV"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.artifact_name }}-${{ env.sha_short }}
+          path: ./target/${{ env.artifact_name }}*.jar
+
+      - name: Workflow Release Notes
+        uses: peter-evans/repository-dispatch@v2
+        if: ${{ github.event.inputs.releaseVersion }} != "" && ${{ github.event.inputs.developmentVersion }} != ""
+        with:
+          event-type: release-notes
+          client-payload: '{"auto_release": "${{ env.auto_release }}", "artifact": "${{ env.artifact_name }}-${{ env.sha_short }}"}'
