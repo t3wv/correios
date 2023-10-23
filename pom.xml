@@ -4,7 +4,7 @@
     <!--    <groupId>io.t3wio.t3w</groupId>-->
     <groupId>io.github.rafaelpereiraa</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.18</version>
+    <version>1.0.19-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -244,6 +244,9 @@
                     <configuration>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>ossrh</releaseProfiles>
+                        <goals>deploy</goals>
                     </configuration>
                     <executions>
                         <execution>
