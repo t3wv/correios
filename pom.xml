@@ -78,10 +78,6 @@
         <repository>
             <id>sonatype-snapshots-new</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sonatype-snapshots-old</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -248,9 +244,6 @@
                     <configuration>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <useReleaseProfile>false</useReleaseProfile>
-                        <releaseProfiles>ossrh</releaseProfiles>
-                        <goals>deploy</goals>
                     </configuration>
                     <executions>
                         <execution>
