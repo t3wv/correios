@@ -22,8 +22,6 @@ jobs:
           CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
           CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
 
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
 
   github-build-and-release:
     needs: build
@@ -38,19 +36,22 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Changelog
+      - name: Update dependency graph
+        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+
+      - name: Generate changelog
         uses: scottbrenner/generate-changelog-action@master
         id: Changelog
         env:
           REPO: ${{ github.repository }}
 
-      - name: Get Version to Release
+      - name: Get version to release
         run: echo "release_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout)">>"$GITHUB_ENV"
 
       - name: Publish to GitHub Packages
         run: |
           mvn -B -DskipTests versions:set -DgenerateBackupPoms=false -DnewVersion=${{env.release_version}}
-          mvn -DskipTests deploy --settings settings.xml -P github
+          mvn -B -DskipTests deploy --settings settings.xml -P github
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
@@ -103,7 +104,6 @@ jobs:
       - name: Release With Maven
         run: |
           mvn -s settings.xml -Possrh clean package verify source:jar javadoc:jar gpg:sign --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ env.release_version }} deploy
-        
 
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
