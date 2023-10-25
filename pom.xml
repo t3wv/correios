@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
@@ -7,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>correios</name>
-    <description>Integração api correios</description>
+    <description>Integração com API dos Correios</description>
     <url>https://github.com/t3wv/correios</url>
 
     <!-- Organizacao -->
@@ -16,6 +17,7 @@
         <url>https://t3w.io</url>
     </organization>
 
+    <!-- Licenciamento -->
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -24,6 +26,7 @@
         </license>
     </licenses>
 
+    <!-- Desenvolvedores -->
     <developers>
         <developer>
             <id>rafaelpereiraa</id>
@@ -37,6 +40,7 @@
         </developer>
     </developers>
 
+    <!-- Controle de codigo -->
     <scm>
         <url>https://github.com/t3wv/correios.git</url>
         <connection>scm:git:https://github.com/t3wv/correios.git</connection>
@@ -44,16 +48,14 @@
         <tag>HEAD</tag>
     </scm>
 
-
-
     <!-- Repositorios -->
     <repositories>
         <repository>
-            <id>google-maven-central</id>
+            <id>google</id>
             <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
         </repository>
         <repository>
-            <id>sonatype-snapshots-new</id>
+            <id>sonatype</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>true</enabled>
@@ -79,7 +81,7 @@
         <image.tag>${maven.build.timestamp}</image.tag>
     </properties>
 
-    <!--Dependencias-->
+    <!-- Dependencias -->
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -164,14 +166,11 @@
                         <debug>false</debug>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.2</version>
-                    <configuration>
-                        <excludedGroups>api,database</excludedGroups>
-                    </configuration>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                    <version>3.1.2</version>-->
+<!--                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>
@@ -289,7 +288,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.2.1</version>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
