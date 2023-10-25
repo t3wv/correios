@@ -30,6 +30,11 @@
             <name>Rafael da Silva Pereira</name>
             <email>rafaelsilvapereiraa@gmail.com</email>
         </developer>
+        <developer>
+            <id>fincatto</id>
+            <name>Diego Fincatto</name>
+            <url>https://github.com/fincatto</url>
+        </developer>
     </developers>
 
     <scm>
