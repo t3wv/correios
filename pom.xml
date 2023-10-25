@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.21-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -12,10 +13,8 @@
 
     <!-- Organizacao -->
     <organization>
-        <!--        <name>T3w Tecnologia</name>-->
-        <!--        <url>https://t3w.io</url>-->
-        <name>Test publish</name>
-        <url>https://github.com/RafaelPereiraa</url>
+        <name>T3w Tecnologia</name>
+        <url>https://t3w.io</url>
     </organization>
 
     <!-- Licenciamento -->
@@ -72,7 +71,7 @@
         <java.version>17</java.version>
         <slf4j.version>2.0.9</slf4j.version>
         <junit.version>5.10.0</junit.version>
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
 
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -167,11 +166,11 @@
                         <debug>false</debug>
                     </configuration>
                 </plugin>
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-surefire-plugin</artifactId>-->
-<!--                    <version>3.1.2</version>-->
-<!--                </plugin>-->
+                <!--                <plugin>-->
+                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
+                <!--                    <artifactId>maven-surefire-plugin</artifactId>-->
+                <!--                    <version>3.1.2</version>-->
+                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>
