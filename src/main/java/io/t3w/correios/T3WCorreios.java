@@ -48,7 +48,7 @@ public class T3WCorreios implements T3WLoggable {
             throw new IllegalArgumentException("Um token de API válido é necessário para a consulta!");
         }
         if (cartaoPostagem == null || cartaoPostagem.isBlank()) {
-            throw new IllegalArgumentException("Um catão de postagem válido é necessário para a consulta!");
+            throw new IllegalArgumentException("Um cartão de postagem válido é necessário para a consulta!");
         }
 
         this.userId = userId;
