@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.github.rafaelpereiraa</groupId>
+    <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.20-SNAPSHOT</version>
+    <version>1.0.21-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
-    <description>Integração api correios</description>
-    <url>https://github.com/RafaelPereiraa/correios</url>
+    <description>Integração com API dos Correios</description>
+    <url>https://github.com/t3wv/correios</url>
 
     <!-- Organizacao -->
     <organization>
@@ -18,6 +18,7 @@
         <url>https://github.com/RafaelPereiraa</url>
     </organization>
 
+    <!-- Licenciamento -->
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -26,56 +27,36 @@
         </license>
     </licenses>
 
+    <!-- Desenvolvedores -->
     <developers>
         <developer>
             <id>rafaelpereiraa</id>
             <name>Rafael da Silva Pereira</name>
             <email>rafaelsilvapereiraa@gmail.com</email>
         </developer>
+        <developer>
+            <id>fincatto</id>
+            <name>Diego Fincatto</name>
+            <url>https://github.com/fincatto</url>
+        </developer>
     </developers>
 
+    <!-- Controle de codigo -->
     <scm>
-        <url>https://github.com/RafaelPereiraa/correios.git</url>
-        <connection>scm:git:https://github.com/RafaelPereiraa/correios.git</connection>
-        <developerConnection>scm:git:https://github.com/RafaelPereiraa/correios.git</developerConnection>
-        <tag>1.0.1</tag>
+        <url>https://github.com/t3wv/correios.git</url>
+        <connection>scm:git:https://github.com/t3wv/correios.git</connection>
+        <developerConnection>scm:git:https://github.com/t3wv/correios.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
-
-    <profiles>
-        <profile>
-            <id>ossrh</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>github</id>
-            <distributionManagement>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub ${env.GITHUB_ACTOR} Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}/correios</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-    </profiles>
-
 
     <!-- Repositorios -->
     <repositories>
         <repository>
-            <id>google-maven-central</id>
+            <id>google</id>
             <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
         </repository>
         <repository>
-            <id>sonatype-snapshots-new</id>
+            <id>sonatype</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>true</enabled>
@@ -101,7 +82,7 @@
         <image.tag>${maven.build.timestamp}</image.tag>
     </properties>
 
-    <!--Dependencias-->
+    <!-- Dependencias -->
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -142,16 +123,14 @@
     <!-- Configuracoes de build -->
     <build>
         <finalName>${finalName}</finalName>
-        <directory>${project.basedir}/target</directory>
-        <outputDirectory>${project.build.directory}/classes</outputDirectory>
-        <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
             </resource>
             <resource>
                 <filtering>false</filtering>
-                <directory>${project.basedir}/src/main/java</directory>
+                <directory>src/main/java</directory>
                 <includes>
                     <include>**</include>
                 </includes>
@@ -160,9 +139,11 @@
                 </excludes>
             </resource>
         </resources>
+
         <testResources>
             <testResource>
-                <directory>${project.basedir}/src/test/resources</directory>
+                <filtering>false</filtering>
+                <directory>src/test/resources</directory>
             </testResource>
             <testResource>
                 <filtering>false</filtering>
@@ -175,6 +156,7 @@
                 </excludes>
             </testResource>
         </testResources>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -185,102 +167,130 @@
                         <debug>false</debug>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.2</version>
-                    <configuration>
-                        <excludedGroups>api,database</excludedGroups>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.1.2</version>
-                    <configuration>
-                        <parallel>all</parallel>
-                        <useUnlimitedThreads>true</useUnlimitedThreads>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.0</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.13</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
-                    <configuration>
-                        <tagNameFormat>@{project.version}</tagNameFormat>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <useReleaseProfile>false</useReleaseProfile>
-                        <releaseProfiles>ossrh</releaseProfiles>
-                        <goals>deploy</goals>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>default</id>
-                            <goals>
-                                <goal>perform</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                            <configuration>
-                                <gpgArguments>
-                                    <arg>--pinentry-mode</arg>
-                                    <arg>loopback</arg>
-                                </gpgArguments>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                    <version>3.1.2</version>-->
+<!--                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>github</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/${env.GITHUB_ACTOR}/correios</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <configuration>
+                            <scmCommentPrefix>[maven-release-plugin] [skip ci]</scmCommentPrefix>
+                            <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <tagNameFormat>v@{project.version}</tagNameFormat>
+                            <remoteTagging>false</remoteTagging>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <goals>
+                                    <goal>perform</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.1</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
