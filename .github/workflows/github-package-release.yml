@@ -1,0 +1,44 @@
+name: "Github Release"
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  github-build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Update dependency graph
+        uses: advanced-security/maven-dependency-submission-action@v3
+
+      - name: Publish to GitHub Packages
+        run: |
+          mvn -B -DskipTests deploy --settings settings.xml -P github
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
+          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
+          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+        with:
+          tag_name: ${{ env.release_version }}
+          release_name: Release ${{ env.release_version }}
+          body: ${{ steps.Changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
