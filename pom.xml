@@ -68,7 +68,7 @@
     <!-- Propriedades -->
     <properties>
         <java.version>17</java.version>
-        <slf4j.version>2.0.9</slf4j.version>
+        <slf4j.version>2.0.10</slf4j.version>
         <junit.version>5.10.1</junit.version>
         <jackson.version>2.16.0</jackson.version>
 
