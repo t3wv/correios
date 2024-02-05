@@ -69,9 +69,7 @@
     <properties>
         <java.version>17</java.version>
         <slf4j.version>2.0.9</slf4j.version>
-        <junit.version>5.10.1</junit.version>
         <jackson.version>2.16.1</jackson.version>
-
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -160,7 +158,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.12.1</version>
                     <configuration>
                         <debug>false</debug>
                     </configuration>
@@ -285,7 +283,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.2.3</version>
+                        <version>3.2.5</version>
                     </plugin>
                 </plugins>
             </build>
