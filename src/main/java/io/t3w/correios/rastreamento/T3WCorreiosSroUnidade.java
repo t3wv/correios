@@ -3,6 +3,7 @@ package io.t3w.correios.rastreamento;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.t3w.correios.T3WCorreiosEndereco;
 
 import java.util.Map;
 
@@ -14,12 +15,12 @@ public class T3WCorreiosSroUnidade {
     @JsonProperty("tipo")
     private String tipo;
     @JsonProperty("endereco")
-    private T3WCorreiosSroEndereco endereco;
+    private T3WCorreiosEndereco endereco;
 
     public T3WCorreiosSroUnidade() {
     }
 
-    public T3WCorreiosSroUnidade(String codigo, String tipo, T3WCorreiosSroEndereco endereco) {
+    public T3WCorreiosSroUnidade(String codigo, String tipo, T3WCorreiosEndereco endereco) {
         this.codigo = codigo;
         this.tipo = tipo;
         this.endereco = endereco;
@@ -43,17 +44,17 @@ public class T3WCorreiosSroUnidade {
         return this;
     }
 
-    public T3WCorreiosSroEndereco getEndereco() {
+    public T3WCorreiosEndereco getEndereco() {
         return endereco;
     }
 
-    public T3WCorreiosSroUnidade setEndereco(T3WCorreiosSroEndereco endereco) {
+    public T3WCorreiosSroUnidade setEndereco(T3WCorreiosEndereco endereco) {
         this.endereco = endereco;
         return this;
     }
 
     @JsonProperty("endereco")
     private void unpackEndereco(Map<String, String> endereco) {
-        this.endereco = new ObjectMapper().convertValue(endereco, T3WCorreiosSroEndereco.class);
+        this.endereco = new ObjectMapper().convertValue(endereco, T3WCorreiosEndereco.class);
     }
 }
