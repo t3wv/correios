@@ -2,11 +2,11 @@ package io.t3w.correios.rastreamento;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.t3w.correios.T3WCorreiosEndereco;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class T3WCorreiosSroPessoa {
     @JsonProperty("nome")
     private String nome;
@@ -17,7 +17,7 @@ public class T3WCorreiosSroPessoa {
     @JsonProperty("comentario")
     private String comentario;
     @JsonProperty("endereco")
-    private T3WCorreiosSroEndereco endereco;
+    private T3WCorreiosEndereco endereco;
 
     public String getNome() {
         return nome;
@@ -55,11 +55,11 @@ public class T3WCorreiosSroPessoa {
         return this;
     }
 
-    public T3WCorreiosSroEndereco getEndereco() {
+    public T3WCorreiosEndereco getEndereco() {
         return endereco;
     }
 
-    public T3WCorreiosSroPessoa setEndereco(T3WCorreiosSroEndereco endereco) {
+    public T3WCorreiosSroPessoa setEndereco(T3WCorreiosEndereco endereco) {
         this.endereco = endereco;
         return this;
     }
