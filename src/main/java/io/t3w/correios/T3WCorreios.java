@@ -294,7 +294,7 @@ public class T3WCorreios implements T3WLoggable {
      * @throws Exception Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
      *
-     * @note O parâmetro {@code status} é opcional. Se não informado, busca todos os contratos do cnpj.
+     * @note O parâmetro {@code status} é opcional. Se não informado, retorna por padrão os ativos.
      */
     public List<T3WCorreiosContrato> consultarContratos(String cnpj, T3WCorreiosContratoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
         var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "")));
@@ -371,7 +371,7 @@ public class T3WCorreios implements T3WLoggable {
      * @throws Exception Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
      *
-     * @note O parâmetro {@code status} é opcional. Se não informado, busca todos os cartões de postagem do contrato.
+     * @note O parâmetro {@code status} é opcional. Se não informado, por padrão a api retorna os ativos.
      */
     public List<T3WCorreiosContratoCartaoPostagem> consultarCartoesPostagemByContrato(String cnpj, String numeroContrato, T3WCorreiosContratoCartaoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
         var page = 0;

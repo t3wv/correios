@@ -2,6 +2,7 @@ package io.t3w.correios.contratos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,9 @@ public class T3WCorreiosContratoCartaoPostagem {
 
     @JsonProperty("dtFimVigencia")
     private LocalDateTime dtFimVigencia;
+
+    @JsonProperty("status")
+    private T3WCorreiosContratoCartaoStatus status;
 
     public T3WCorreiosContratoCartaoPostagem() {
     }
@@ -101,6 +105,15 @@ public class T3WCorreiosContratoCartaoPostagem {
 
     public T3WCorreiosContratoCartaoPostagem setDtFimVigencia(LocalDateTime dtFimVigencia) {
         this.dtFimVigencia = dtFimVigencia;
+        return this;
+    }
+
+    public T3WCorreiosContratoCartaoStatus getStatus() {
+        return status;
+    }
+
+    public T3WCorreiosContratoCartaoPostagem setStatus(T3WCorreiosContratoCartaoStatus status) {
+        this.status = status;
         return this;
     }
 }
