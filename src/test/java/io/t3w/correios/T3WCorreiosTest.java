@@ -1,7 +1,8 @@
 package io.t3w.correios;
 
 import io.t3w.correios.contratos.T3WCorreiosContrato;
-import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
+import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
+import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagem;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -105,14 +105,14 @@ class T3WCorreiosTest {
 
     @Test
     void testRequestPrepostagemInexistente() {
-            Assertions.assertThrows(T3WCorreiosResponseDefault.class, ()-> CORREIOS.consultarPrepostagem("TJ134711047BR"));
+        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagem("TJ134711047BR"));
     }
 
     @Test
     @Disabled
     void testCriarPrepostagem() throws Exception, T3WCorreiosResponseDefault {
-        final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000","Av. Presidente Kennedy","568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
-        final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000","Av. Presidente Kennedy","568", "CAMPINAS", "SAO JOSE", "SC"));
+        final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
+        final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC"));
         final var prepostagem = new T3WCorreiosPrepostagem(remetente, destinatario, "03220", "30", "1", "1");
         final T3WCorreiosPrepostagem prepostagemEfetivada = CORREIOS.criarPrepostagem(prepostagem);
     }
@@ -129,7 +129,7 @@ class T3WCorreiosTest {
 
     @Test
     void testListarPrepostagensErro() {
-        Assertions.assertThrows(T3WCorreiosResponseDefault.class, ()-> CORREIOS.consultarPrepostagens(null, null, null, null, "999999", "PREPOSTADO", null, "TODOS", null, null));
+        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagens(null, null, null, null, "999999", "PREPOSTADO", null, "TODOS", null, null));
     }
 
     @Test
@@ -139,8 +139,9 @@ class T3WCorreiosTest {
     }
 
     @Test
-    void testListarContratos() throws T3WCorreiosResponseDefault, Exception {
-        final List<T3WCorreiosContrato> contratos = CORREIOS.consultarContratos(CNPJ, null, false);  assertNotNull(contratos);
+    void testListarContratosAtivos() throws T3WCorreiosResponseDefault, Exception {
+        final List<T3WCorreiosContrato> contratos = CORREIOS.consultarContratos(CNPJ, T3WCorreiosContratoStatus.ATIVO, false);
+        assertNotNull(contratos);
         for (final var contrato : contratos) {
             System.out.println(CORREIOS.getObjectMapper().writeValueAsString(contrato));
         }
@@ -148,7 +149,7 @@ class T3WCorreiosTest {
 
     @Test
     void testListarServicosDeContrato() throws Exception, T3WCorreiosResponseDefault {
-        final var servicos = CORREIOS.consultarServicosByContrato(CNPJ,CONTRATO, CARTAO_POSTAGEM);
+        final var servicos = CORREIOS.consultarServicosByContrato(CNPJ, CONTRATO, CARTAO_POSTAGEM);
         assertNotNull(servicos);
 
         for (final var servico : servicos) {
@@ -165,10 +166,27 @@ class T3WCorreiosTest {
     }
 
     @Test
-    void testListarCartoesDeContrato() throws Exception, T3WCorreiosResponseDefault {
-        final var cartoes = CORREIOS.consultarCartoesPostagemByContrato(CNPJ, CONTRATO, null, false);
+    void testListarCartoesAtivosDeContrato() throws Exception, T3WCorreiosResponseDefault {
+        final var cartoes = CORREIOS.consultarCartoesPostagemByContrato(CNPJ, CONTRATO, T3WCorreiosContratoCartaoStatus.ATIVO, false);
         assertNotNull(cartoes);
+        for (final var cartao : cartoes) {
+            System.out.println(CORREIOS.getObjectMapper().writeValueAsString(cartao));
+        }
+    }
 
+    @Test
+    void testListarContratos() throws Exception, T3WCorreiosResponseDefault {
+        final var contratos = CORREIOS.consultarContratos(CNPJ);
+        assertNotNull(contratos);
+        for (final var cartao : contratos) {
+            System.out.println(CORREIOS.getObjectMapper().writeValueAsString(cartao));
+        }
+    }
+
+    @Test
+    void testListarCartoesDeContrato() throws Exception, T3WCorreiosResponseDefault {
+        final var cartoes = CORREIOS.consultarCartoesPostagemByContrato(CNPJ, CONTRATO);
+        assertNotNull(cartoes);
         for (final var cartao : cartoes) {
             System.out.println(CORREIOS.getObjectMapper().writeValueAsString(cartao));
         }
