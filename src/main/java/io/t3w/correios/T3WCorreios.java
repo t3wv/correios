@@ -200,9 +200,8 @@ public class T3WCorreios implements T3WLoggable {
      *
      * @param codigoObjeto Código do objeto de envio.
      * @return Objeto {@link T3WCorreiosPrepostagemMovimentacao} representando a movimentação da pré-postagem.
-     * @throws Exception Se ocorrer um erro durante o processo de consulta.
+     * @throws Exception                  Se ocorrer um erro durante o processo de consulta.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante a consulta.
-     *
      */
     public T3WCorreiosPrepostagemMovimentacao consultarPrepostagem(final String codigoObjeto) throws Exception, T3WCorreiosResponseDefault {
         final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/postada?codigoObjeto=%s".formatted(codigoObjeto));
@@ -218,24 +217,23 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Método que consulta as pré-postagens de acordo com os filtros fornecidos.
      *
-     * @param id Identificador dos Correios do solicitante.
-     * @param codigoObjeto Código do objeto de envio.
-     * @param eTicket Número do e-Ticket.
-     * @param codigoEstampa2D Código da estampa 2D.
-     * @param idCorreios Identificador dos Correios.
-     * @param status Status da pré-postagem.
-     * @param logisticaReversa Indicador de logística reversa.
-     * @param tipoObjeto Tipo do objeto de envio.
+     * @param id                  Identificador dos Correios do solicitante.
+     * @param codigoObjeto        Código do objeto de envio.
+     * @param eTicket             Número do e-Ticket.
+     * @param codigoEstampa2D     Código da estampa 2D.
+     * @param idCorreios          Identificador dos Correios.
+     * @param status              Status da pré-postagem.
+     * @param logisticaReversa    Indicador de logística reversa.
+     * @param tipoObjeto          Tipo do objeto de envio.
      * @param modalidadePagamento Modalidade de pagamento.
-     * @param objetoCargo Objeto de carga.
+     * @param objetoCargo         Objeto de carga.
      * @return Lista de {@link T3WCorreiosPrepostagem} representando as pré-postagens.
-     * @throws Exception Se ocorrer um erro durante o processo de consulta.
+     * @throws Exception                  Se ocorrer um erro durante o processo de consulta.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante a consulta.
-     *
      * @note Os parâmetros opcionais podem ser omitidos. Se não fornecidos, a consulta retornará todas as pré-postagens.
      * @note A consulta é realizada em páginas para evitar problemas de memória com grandes conjuntos de dados.
      */
-    public List<T3WCorreiosPrepostagem> consultarPrepostagens(String id ,String codigoObjeto ,String eTicket ,String codigoEstampa2D ,String idCorreios ,String status ,String logisticaReversa ,String tipoObjeto ,String modalidadePagamento ,String objetoCargo) throws Exception, T3WCorreiosResponseDefault {
+    public List<T3WCorreiosPrepostagem> consultarPrepostagens(String id, String codigoObjeto, String eTicket, String codigoEstampa2D, String idCorreios, String status, String logisticaReversa, String tipoObjeto, String modalidadePagamento, String objetoCargo) throws Exception, T3WCorreiosResponseDefault {
         var page = 0;
         final var pageSize = 50;
         var uri = (urlBase + "/prepostagem/v2/prepostagens?id=%s&codigoObjeto=%s&eTicket=%s&codigoEstampa2D=%s&idCorreios=%s&status=%s&logisticaReversa=%s&tipoObjeto=%s&modalidadePagamento=%s&objetoCargo=%s&page=%s&size=%s");
@@ -265,12 +263,11 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Método que cancela uma pré-postagem.
      *
-     * @param idCorreios Identificador dos Correios do solicitante do cancelamento.
+     * @param idCorreios    Identificador dos Correios do solicitante do cancelamento.
      * @param idPrepostagem Identificador da pré-postagem a ser cancelada.
      * @return Objeto {@link T3WCorreiosPrepostagemResponseCancelamento} representando o resultado do cancelamento.
-     * @throws Exception Se ocorrer um erro durante o processo de cancelamento.
+     * @throws Exception                  Se ocorrer um erro durante o processo de cancelamento.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante o cancelamento.
-     *
      */
     public T3WCorreiosPrepostagemResponseCancelamento cancelarPrePostagem(String idCorreios, String idPrepostagem) throws Exception, T3WCorreiosResponseDefault {
         final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/%s?idCorreiosSolicitanteCancelamento=%s".formatted(idPrepostagem, idCorreios));
@@ -285,18 +282,35 @@ public class T3WCorreios implements T3WLoggable {
     // contratos
 
     /**
+     * Método que consulta <b>todos</b> os contratos de um determinado cnpj.
+     *
+     * @param cnpj Cnpj da empresa.
+     */
+    public List<T3WCorreiosContrato> consultarContratos(final String cnpj) throws Exception, T3WCorreiosResponseDefault {
+        final List<T3WCorreiosContrato> contratos = new ArrayList<>();
+        for (T3WCorreiosContratoStatus correiosContratoStatus : T3WCorreiosContratoStatus.values()) {
+            try {
+                contratos.addAll(this.consultarContratos(cnpj, correiosContratoStatus, true));
+                contratos.addAll(this.consultarContratos(cnpj, correiosContratoStatus, false));
+            } catch (T3WCorreiosResponseDefault e) {
+                this.getLogger().info("Consulta de contratos com status '{}' não obteve resultados. Motivo: '{}'", correiosContratoStatus, e.getMessage());
+            }
+        }
+        return contratos;
+    }
+
+    /**
      * Método que consulta os contratos de um determinado cnpj.
      *
-     * @param cnpj Cnpj da empresa a ser consultado os contratos.
-     * @param status Status do contrato.
+     * @param cnpj            Cnpj da empresa a ser consultado os contratos.
+     * @param status          Status do contrato.
      * @param somenteVigentes Flag para indicar se a consulta deve trazer somente contratos vigentes. 'true' para somente contratos vigentes, 'false' para todos.
      * @return Lista de {@link T3WCorreiosContrato} representando os contratos.
-     * @throws Exception Se ocorrer um erro durante o processo.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
-     *
      * @note O parâmetro {@code status} é opcional. Se não informado, retorna por padrão os ativos.
      */
-    public List<T3WCorreiosContrato> consultarContratos(String cnpj, T3WCorreiosContratoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
+    public List<T3WCorreiosContrato> consultarContratos(final String cnpj, T3WCorreiosContratoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
         var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "")));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return Arrays.stream(this.objectMapper.readValue(response.body(), T3WCorreiosContrato[].class)).toList();
@@ -308,13 +322,12 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Método que consulta os serviços de um determinado contrato.
      *
-     * @param cnpj Cnpj da empresa.
-     * @param numeroContrato Número do contrato.
+     * @param cnpj                 Cnpj da empresa.
+     * @param numeroContrato       Número do contrato.
      * @param numeroCartaoPostagem Número do cartão de postagem.
      * @return Lista de {@link T3WCorreiosContratoServico} representando os serviços.
-     * @throws Exception Se ocorrer um erro durante o processo.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
-     *
      * @note O parâmetro {@code numeroCartaoPostagem} é opcional. Se informado, busca apenas os serviços disponíveis para este cartão.
      */
     public List<T3WCorreiosContratoServico> consultarServicosByContrato(String cnpj, String numeroContrato, String numeroCartaoPostagem) throws Exception, T3WCorreiosResponseDefault {
@@ -344,12 +357,11 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Método que consulta a categoria de um determinado contrato.
      *
-     * @param cnpj Cnpj da empresa.
+     * @param cnpj           Cnpj da empresa.
      * @param numeroContrato Número do contrato.
      * @return Objeto {@link T3WCorreiosContrato} representando a categoria do contrato.
-     * @throws Exception Se ocorrer um erro durante o processo.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
-     *
      */
     public T3WCorreiosContrato consultarCategoriaContrato(String cnpj, String numeroContrato) throws Exception, T3WCorreiosResponseDefault {
         var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%S/contratos/%s/categoria".formatted(cnpj, numeroContrato)));
@@ -361,16 +373,34 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     /**
+     * Método que consulta <b>todos</b> os cartões de postagem de um determinado contrato.
+     *
+     * @param cnpj           Cnpj da empresa.
+     * @param numeroContrato Número do contrato.
+     */
+    public List<T3WCorreiosContratoCartaoPostagem> consultarCartoesPostagemByContrato(String cnpj, String numeroContrato) throws T3WCorreiosResponseDefault, Exception {
+        final List<T3WCorreiosContratoCartaoPostagem> cartoes = new ArrayList<>();
+        for (T3WCorreiosContratoCartaoStatus correiosCartoesStatus : T3WCorreiosContratoCartaoStatus.values()) {
+            try {
+                cartoes.addAll(this.consultarCartoesPostagemByContrato(cnpj, numeroContrato, correiosCartoesStatus, true));
+                cartoes.addAll(this.consultarCartoesPostagemByContrato(cnpj, numeroContrato, correiosCartoesStatus, false));
+            } catch (T3WCorreiosResponseDefault e) {
+                this.getLogger().info("Consulta de cartões postagem com status '{}' não obteve retornos. Motivo: '{}'", correiosCartoesStatus, e.getMessage());
+            }
+        }
+        return cartoes;
+    }
+
+    /**
      * Método que consulta os cartões de postagem de um determinado contrato.
      *
-     * @param cnpj Cnpj da empresa.
-     * @param numeroContrato Número do contrato.
-     * @param status Status do cartão de postagem.
+     * @param cnpj            Cnpj da empresa.
+     * @param numeroContrato  Número do contrato.
+     * @param status          Status do cartão de postagem.
      * @param somenteVigentes Flag para indicar se a consulta deve trazer somente cartões vigentes. 'true' para somente cartões vigentes, 'false' para todos.
      * @return Lista de {@link T3WCorreiosContratoCartaoPostagem} representando os cartões de postagem.
-     * @throws Exception Se ocorrer um erro durante o processo.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
-     *
      * @note O parâmetro {@code status} é opcional. Se não informado, por padrão a api retorna os ativos.
      */
     public List<T3WCorreiosContratoCartaoPostagem> consultarCartoesPostagemByContrato(String cnpj, String numeroContrato, T3WCorreiosContratoCartaoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
