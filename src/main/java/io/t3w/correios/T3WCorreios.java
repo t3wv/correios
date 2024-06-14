@@ -43,19 +43,23 @@ import java.util.stream.Collectors;
  */
 public class T3WCorreios implements T3WLoggable {
 
+    private static final String URL_BASE_PRODUCAO = "https://api.correios.com.br";
+    private static final String URL_BASE_HOMOLOGACAO = "https://apihom.correios.com.br";
+
     private Duration timeout;
     private final HttpClient client;
     private final ObjectMapper objectMapper;
     private final String userId;
     private final String apiToken;
     private final String cartaoPostagem;
+    private final String urlBase;
     private T3WCorreiosBearerToken bearerToken;
 
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
-    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem) {
+    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isProducao) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException("Um ID de usuário válido é necessário para a consulta!");
         }
@@ -69,6 +73,7 @@ public class T3WCorreios implements T3WLoggable {
         this.userId = userId;
         this.apiToken = apiToken;
         this.cartaoPostagem = cartaoPostagem;
+        this.urlBase = isProducao ? URL_BASE_PRODUCAO : URL_BASE_HOMOLOGACAO;
 
         this.setTimeout(Duration.ofSeconds(15));
         this.client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build();
@@ -93,7 +98,7 @@ public class T3WCorreios implements T3WLoggable {
         if (this.bearerToken == null || this.bearerToken.getExpiraEm().isBefore(LocalDateTime.now())) {
             this.getLogger().debug("Requisitando novo bearer token para usuario '{}', api token '{}' e cartão de postagem '{}'", this.userId, this.apiToken, this.cartaoPostagem);
             final var httpRequest = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.correios.com.br/token/v1/autentica/cartaopostagem"))
+                    .uri(new URI(urlBase + "/token/v1/autentica/cartaopostagem"))
                     .POST(HttpRequest.BodyPublishers.ofString("{\"numero\":\"%s\"}".formatted(cartaoPostagem)))
                     .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Basic %s".formatted(Base64.getEncoder().encodeToString("%s:%s".formatted(userId, apiToken).getBytes(StandardCharsets.UTF_8)))))
                     .timeout(this.timeout)
@@ -139,7 +144,7 @@ public class T3WCorreios implements T3WLoggable {
 
     public List<T3WCorreiosSroObjeto> rastrearObjetos(final Set<String> codigosObjetos) throws Exception {
         this.getLogger().debug("Rastreando objetos para usuario '{}', api token '{}' e cartão de postagem '{}': '{}'", this.userId, this.apiToken, this.cartaoPostagem, codigosObjetos);
-        final var url = new URI("https://api.correios.com.br/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
+        final var url = new URI(urlBase + "/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return Arrays.asList(this.objectMapper.convertValue(this.objectMapper.readTree(response.body()).get("objetos"), T3WCorreiosSroObjeto[].class));
@@ -151,7 +156,7 @@ public class T3WCorreios implements T3WLoggable {
 
     public T3WCorreiosPrazo calcularPrazo(final String codigoServico, final String cepOrigem, final String cepDestino) throws Exception {
         this.getLogger().debug("Solicitando prazo de entrega para o servico '{}' de '{}' para '{}'...", codigoServico, cepOrigem, cepDestino);
-        final var url = new URI("https://api.correios.com.br/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
+        final var url = new URI(urlBase + "/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrazo.class);
@@ -170,7 +175,7 @@ public class T3WCorreios implements T3WLoggable {
             servicosAdicionaisTratado.add(T3WCorreiosPrecoServicoAdicional.VALOR_DECLARADO);
         }
 
-        final var url = new URI("https://api.correios.com.br/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%d&tpObjeto=%s&comprimento=%d&altura=%d&largura=%d&diametro=%d&vlDeclarado=%s&servicosAdicionais=%s".formatted(codigoServico, cepDestino, cepOrigem, pesoGramas, tipoObjeto.getCodigo(), comprimentoCm, alturaCm, larguraCm, diametroCm, valorDeclarado, servicosAdicionaisTratado.stream().map(T3WCorreiosPrecoServicoAdicional::getCodigo).collect(Collectors.joining(","))));
+        final var url = new URI(urlBase + "/preco/v1/nacional/%s?cepDestino=%s&cepOrigem=%s&psObjeto=%d&tpObjeto=%s&comprimento=%d&altura=%d&largura=%d&diametro=%d&vlDeclarado=%s&servicosAdicionais=%s".formatted(codigoServico, cepDestino, cepOrigem, pesoGramas, tipoObjeto.getCodigo(), comprimentoCm, alturaCm, larguraCm, diametroCm, valorDeclarado, servicosAdicionaisTratado.stream().map(T3WCorreiosPrecoServicoAdicional::getCodigo).collect(Collectors.joining(","))));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPreco.class);
@@ -181,7 +186,7 @@ public class T3WCorreios implements T3WLoggable {
     // Prepostagem
 
     public T3WCorreiosPrepostagem criarPrepostagem(T3WCorreiosPrepostagem prepostagem) throws Exception, T3WCorreiosResponseDefault {
-        final var url = new URI("https://api.correios.com.br/prepostagem/v1/prepostagens");
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens");
         final var response = sendPostRequest(url, prepostagem);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagem.class);
@@ -200,7 +205,7 @@ public class T3WCorreios implements T3WLoggable {
      *
      */
     public T3WCorreiosPrepostagemMovimentacao consultarPrepostagem(final String codigoObjeto) throws Exception, T3WCorreiosResponseDefault {
-        final var url = new URI("https://api.correios.com.br/prepostagem/v1/prepostagens/postada?codigoObjeto=%s".formatted(codigoObjeto));
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/postada?codigoObjeto=%s".formatted(codigoObjeto));
         final var response = this.sendGetRequest(url);
 
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
@@ -233,7 +238,7 @@ public class T3WCorreios implements T3WLoggable {
     public List<T3WCorreiosPrepostagem> consultarPrepostagens(String id ,String codigoObjeto ,String eTicket ,String codigoEstampa2D ,String idCorreios ,String status ,String logisticaReversa ,String tipoObjeto ,String modalidadePagamento ,String objetoCargo) throws Exception, T3WCorreiosResponseDefault {
         var page = 0;
         final var pageSize = 50;
-        var uri = ("https://api.correios.com.br/prepostagem/v2/prepostagens?id=%s&codigoObjeto=%s&eTicket=%s&codigoEstampa2D=%s&idCorreios=%s&status=%s&logisticaReversa=%s&tipoObjeto=%s&modalidadePagamento=%s&objetoCargo=%s&page=%s&size=%s");
+        var uri = (urlBase + "/prepostagem/v2/prepostagens?id=%s&codigoObjeto=%s&eTicket=%s&codigoEstampa2D=%s&idCorreios=%s&status=%s&logisticaReversa=%s&tipoObjeto=%s&modalidadePagamento=%s&objetoCargo=%s&page=%s&size=%s");
 
         var url = new URI(uri.formatted(Objects.toString(id, ""), Objects.toString(codigoObjeto, ""), Objects.toString(eTicket, ""), Objects.toString(codigoEstampa2D, ""), Objects.toString(idCorreios, ""), Objects.toString(status, ""), Objects.toString(logisticaReversa, ""), Objects.toString(tipoObjeto, ""), Objects.toString(modalidadePagamento, ""), Objects.toString(objetoCargo, ""), page, pageSize));
         var response = this.sendGetRequest(url);
@@ -268,7 +273,7 @@ public class T3WCorreios implements T3WLoggable {
      *
      */
     public T3WCorreiosPrepostagemResponseCancelamento cancelarPrePostagem(String idCorreios, String idPrepostagem) throws Exception, T3WCorreiosResponseDefault {
-        final var url = new URI("https://api.correios.com.br/prepostagem/v1/prepostagens/%s?idCorreiosSolicitanteCancelamento=%s".formatted(idPrepostagem, idCorreios));
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/%s?idCorreiosSolicitanteCancelamento=%s".formatted(idPrepostagem, idCorreios));
         final var response = this.sendDeleteRequest(url);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagemResponseCancelamento.class);
@@ -292,7 +297,7 @@ public class T3WCorreios implements T3WLoggable {
      * @note O parâmetro {@code status} é opcional. Se não informado, busca todos os contratos do cnpj.
      */
     public List<T3WCorreiosContrato> consultarContratos(String cnpj, T3WCorreiosContratoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
-        var response = this.sendGetRequest(new URI("https://api.correios.com.br/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "")));
+        var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "")));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return Arrays.stream(this.objectMapper.readValue(response.body(), T3WCorreiosContrato[].class)).toList();
         } else {
@@ -317,7 +322,7 @@ public class T3WCorreios implements T3WLoggable {
         final var pageSize = 50;
         final var servicos = new ArrayList<T3WCorreiosContratoServico>();
 
-        var uri = ("https://api.correios.com.br/meucontrato/v1/empresas/%s/contratos/%s/servicos?nuCartaoPostagem=%s&page=%s&size=%s");
+        var uri = (urlBase + "/meucontrato/v1/empresas/%s/contratos/%s/servicos?nuCartaoPostagem=%s&page=%s&size=%s");
         var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(numeroCartaoPostagem, ""), page, pageSize)));
 
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
@@ -347,7 +352,7 @@ public class T3WCorreios implements T3WLoggable {
      *
      */
     public T3WCorreiosContrato consultarCategoriaContrato(String cnpj, String numeroContrato) throws Exception, T3WCorreiosResponseDefault {
-        var response = this.sendGetRequest(new URI("https://api.correios.com.br/meucontrato/v1/empresas/%S/contratos/%s/categoria".formatted(cnpj, numeroContrato)));
+        var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%S/contratos/%s/categoria".formatted(cnpj, numeroContrato)));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosContrato.class);
         } else {
@@ -373,7 +378,7 @@ public class T3WCorreios implements T3WLoggable {
         final var pageSize = 50;
         final var cartoes = new ArrayList<T3WCorreiosContratoCartaoPostagem>();
 
-        var uri = ("https://api.correios.com.br/meucontrato/v1/empresas/%s/contratos/%s/cartoes?status=%s&vigente=%s&page=%s&size=%s");
+        var uri = (urlBase + "/meucontrato/v1/empresas/%s/contratos/%s/cartoes?status=%s&vigente=%s&page=%s&size=%s");
         var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(status, ""), somenteVigentes ? "S" : "", page, pageSize)));
 
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
