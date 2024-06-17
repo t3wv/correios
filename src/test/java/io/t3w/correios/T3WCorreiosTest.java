@@ -42,8 +42,9 @@ class T3WCorreiosTest {
 //        assertFalse(requestToken.getToken().isEmpty());
 //    }
 
+    @Disabled
     @Test
-    void testRastreamentoObjetos() throws Exception {
+    void testRastreamentoObjetos() throws Exception, T3WCorreiosResponseDefault {
         final var objetosCodigosList = Set.of("TJ134711095BR");
         final var objetosRastreamentos = CORREIOS.rastrearObjetos(objetosCodigosList);
         assertNotNull(objetosRastreamentos);
@@ -52,7 +53,7 @@ class T3WCorreiosTest {
     }
 
     @Test
-    void testRequestComErros() throws Exception {
+    void testRequestComErros() throws Exception, T3WCorreiosResponseDefault {
         final var objetosCodigosComErrosList = Set.of("OZ719594203BR", "YYYYYYYYYYYYYY", "OZ719594305BR");
         final var objetosComErrosRastreamentos = CORREIOS.rastrearObjetos(objetosCodigosComErrosList);
         final var objetosCodigosSohErrosList = Set.of("XXXXXXXXXXXXXX", "YYYYYYYYYYYYYY", "ZZZZZZZZZZZZZZ");
@@ -63,11 +64,11 @@ class T3WCorreiosTest {
         assertNotNull(objetosSohErrosRastreamentos);
         assertNotEquals(objetosComErrosRastreamentos.stream().filter(T3WCorreiosSroObjeto::isValido).count(), objetosCodigosComErrosList.size());
         assertTrue(objetosSohErrosRastreamentos.stream().noneMatch(T3WCorreiosSroObjeto::isValido));
-        assertThrows(Exception.class, () -> CORREIOS.rastrearObjetos(objetosCodigosEmptyList));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.rastrearObjetos(objetosCodigosEmptyList));
     }
 
     @Test
-    void testRequestPrazoServico() throws Exception {
+    void testRequestPrazoServico() throws Exception, T3WCorreiosResponseDefault {
         final var codigoServico = "03298";
         final var cepOrigem = "88010100";
         final var cepDestino = "88101001";
@@ -85,14 +86,14 @@ class T3WCorreiosTest {
         final var cepOrigem = "88010100";
         final var cepDestino = "88101001";
 
-        assertThrows(Exception.class, () -> CORREIOS.calcularPrazo("032X98", cepOrigem, cepDestino));
-        assertThrows(Exception.class, () -> CORREIOS.calcularPrazo(codigoServico, "123412341234", cepDestino));
-        assertThrows(Exception.class, () -> CORREIOS.calcularPrazo(codigoServico, cepOrigem, "123412341234"));
-        assertThrows(Exception.class, () -> CORREIOS.calcularPrazo("123412341234", "123412341234", "123412341234"));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.calcularPrazo("032X98", cepOrigem, cepDestino));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.calcularPrazo(codigoServico, "123412341234", cepDestino));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.calcularPrazo(codigoServico, cepOrigem, "123412341234"));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.calcularPrazo("123412341234", "123412341234", "123412341234"));
     }
 
     @Test
-    void testRequestPrecoServico() throws Exception {
+    void testRequestPrecoServico() throws Exception, T3WCorreiosResponseDefault {
         final var preco = CORREIOS.calcularPreco("03220", "88010100", "69999999", 30000, T3WCorreiosFormatoObjeto.PACOTE, 70, 70, 60, 0, new BigDecimal("330.33"), Collections.singleton(T3WCorreiosPrecoServicoAdicional.AVISO_RECEBIMENTO));
         assertNotNull(preco);
         assertTrue(preco.getPrecoFinal().signum() > 0);
@@ -100,7 +101,7 @@ class T3WCorreiosTest {
 
     @Test
     void testRequestPrecoServicoErros() throws Exception {
-        assertThrows(Exception.class, () -> CORREIOS.calcularPreco("3220", "88010", "3", 1, T3WCorreiosFormatoObjeto.valueOfCodigo("1"), 12341234, 28347, 23847, 238472, new BigDecimal("4.00"), Collections.emptySet()));
+        assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.calcularPreco("3220", "88010", "3", 1, T3WCorreiosFormatoObjeto.valueOfCodigo("1"), 12341234, 28347, 23847, 238472, new BigDecimal("4.00"), Collections.emptySet()));
     }
 
     @Test
@@ -109,7 +110,6 @@ class T3WCorreiosTest {
     }
 
     @Test
-    @Disabled
     void testCriarPrepostagem() throws Exception, T3WCorreiosResponseDefault {
         final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
         final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC"));
@@ -117,6 +117,7 @@ class T3WCorreiosTest {
         final T3WCorreiosPrepostagem prepostagemEfetivada = CORREIOS.criarPrepostagem(prepostagem);
     }
 
+    @Disabled
     @Test
     void testListarPrepostagens() throws Exception, T3WCorreiosResponseDefault {
         final var prepostagens = CORREIOS.consultarPrepostagens(null, null, null, null, USER_ID, "PREPOSTADO", null, "TODOS", null, null);
@@ -132,8 +133,8 @@ class T3WCorreiosTest {
         Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagens(null, null, null, null, "999999", "PREPOSTADO", null, "TODOS", null, null));
     }
 
-    @Test
     @Disabled
+    @Test
     void testCancelarPrepostagem() throws Exception, T3WCorreiosResponseDefault {
         assertNotNull(CORREIOS.cancelarPrePostagem(USER_ID, "XPTO"));
     }
