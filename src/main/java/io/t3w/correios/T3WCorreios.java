@@ -59,6 +59,15 @@ public class T3WCorreios implements T3WLoggable {
         return objectMapper;
     }
 
+    /**
+     * Classe principal de consulta à api.
+     *
+     * @param userId          ID de usuário dos Correios.
+     * @param apiToken        Token de API dos Correios.
+     * @param cartaoPostagem  Número do cartão de postagem.
+     * @param isProducao      Indica se a consulta será realizada em ambiente de produção.
+     * @throws IllegalArgumentException Se os parâmetros de entrada forem inválidos.
+     */
     public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isProducao) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException("Um ID de usuário válido é necessário para a consulta!");
@@ -89,11 +98,27 @@ public class T3WCorreios implements T3WLoggable {
         }));
     }
 
+
+    /**
+     * Define o tempo limite para as solicitações feitas por esta instância.
+     *
+     * @param timeout Tempo limite. {@see Duration}.
+     * @return A própria instância de {@link T3WCorreios}, permitindo encadeamento de chamadas.
+     * @note O tempo limite padrão é de 15 segundos.
+     */
     public T3WCorreios setTimeout(Duration timeout) {
         this.timeout = timeout;
         return this;
     }
 
+    /**
+     * Método privado que solicita um novo token de autenticação aos servidores dos Correios.
+     * Este método é chamado automaticamente quando o token expira ou não existe.
+     *
+     * @return Objeto {@link T3WCorreiosBearerToken} representando o novo token de autenticação.
+     * @throws Exception Se ocorrer um erro durante a solicitação do token.
+     * @throws IllegalAccessException Se a solicitação de token retornar um código de status inesperado.
+     */
     private T3WCorreiosBearerToken requestBearerToken() throws Exception {
         if (this.bearerToken == null || this.bearerToken.getExpiraEm().isBefore(LocalDateTime.now())) {
             this.getLogger().debug("Requisitando novo bearer token para usuario '{}', api token '{}' e cartão de postagem '{}'", this.userId, this.apiToken, this.cartaoPostagem);
@@ -113,6 +138,16 @@ public class T3WCorreios implements T3WLoggable {
         return bearerToken;
     }
 
+    /**
+     * Método privado que envia uma solicitação POST para a API dos correios com cabeçalho:
+     * <code>Content-Type application/json; charset=utf-8</code> e <code>Authorization Bearer {token}<code>.
+     *
+     * @param uri     URI para onde a solicitação será enviada.
+     * @param object  Objeto que será enviado no corpo da solicitação como um JSON.
+     * @return Objeto {@link HttpResponse} contendo a resposta da API.
+     * @throws Exception Se ocorrer um erro durante o envio da solicitação.
+     * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
+     */
     private HttpResponse<String> sendPostRequest(final URI uri, final Object object) throws Exception {
         return this.client.send(HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(this.objectMapper.writeValueAsString(object)))
@@ -122,6 +157,15 @@ public class T3WCorreios implements T3WLoggable {
                 .build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * Método privado que realiza uma requisição GET para a API dos Correios com cabeçalho:
+     * <code>Content-Type application/json; charset=utf-8</code> e <code>Authorization Bearer {token}<code>.
+     *
+     * @param uri URI para a qual a requisição será feita.
+     * @return Objeto {@link HttpResponse} contendo a resposta da API.
+     * @throws Exception Se ocorrer um erro durante a requisição.
+     * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
+     */
     private HttpResponse<String> sendGetRequest(final URI uri) throws Exception {
         return this.client.send(HttpRequest.newBuilder()
                 .GET()
@@ -131,6 +175,15 @@ public class T3WCorreios implements T3WLoggable {
                 .build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * Método privado que realiza uma requisição DELETE para a API dos Correios com cabeçalho:
+     * <code>Content-Type application/json; charset=utf-8</code> e <code>Authorization Bearer {token}<code>.
+     *
+     * @param uri URI para a qual a requisição será feita.
+     * @return Objeto {@link HttpResponse} contendo a resposta da API.
+     * @throws Exception Se ocorrer um erro durante a requisição.
+     * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
+     */
     private HttpResponse<String> sendDeleteRequest(final URI uri) throws Exception {
         return this.client.send(HttpRequest.newBuilder()
                 .DELETE()
@@ -142,31 +195,70 @@ public class T3WCorreios implements T3WLoggable {
 
     // Rastro
 
-    public List<T3WCorreiosSroObjeto> rastrearObjetos(final Set<String> codigosObjetos) throws Exception {
+    /**
+     * Método que realiza o rastreamento de objetos de acordo com os códigos de objetos fornecidos.
+     *
+     * @param codigosObjetos Conjunto de códigos de objetos de envio a serem rastreados.
+     * @return Lista de {@link T3WCorreiosSroObjeto} representando os objetos rastreados.
+     * @throws Exception                  Se ocorrer um erro durante o processo de consulta.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante a consulta.
+     */
+    public List<T3WCorreiosSroObjeto> rastrearObjetos(final Set<String> codigosObjetos) throws Exception, T3WCorreiosResponseDefault {
         this.getLogger().debug("Rastreando objetos para usuario '{}', api token '{}' e cartão de postagem '{}': '{}'", this.userId, this.apiToken, this.cartaoPostagem, codigosObjetos);
+
         final var url = new URI(urlBase + "/srorastro/v1/objetos?codigosObjetos=%s&resultado=T".formatted(String.join(",", codigosObjetos)));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return Arrays.asList(this.objectMapper.convertValue(this.objectMapper.readTree(response.body()).get("objetos"), T3WCorreiosSroObjeto[].class));
+        } else {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
         }
-        throw new Exception("Requisição de rastreamento de objetos retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
     }
 
     // Prazo
 
-    public T3WCorreiosPrazo calcularPrazo(final String codigoServico, final String cepOrigem, final String cepDestino) throws Exception {
+    /**
+     * Método que calcula o prazo de entrega para um determinado serviço de envio.
+     *
+     * @param codigoServico Código do serviço de envio.
+     * @param cepOrigem     CEP de origem.
+     * @param cepDestino    CEP de destino.
+     * @return Objeto {@link T3WCorreiosPrazo} representando o prazo de entrega.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public T3WCorreiosPrazo calcularPrazo(final String codigoServico, final String cepOrigem, final String cepDestino) throws Exception, T3WCorreiosResponseDefault {
         this.getLogger().debug("Solicitando prazo de entrega para o servico '{}' de '{}' para '{}'...", codigoServico, cepOrigem, cepDestino);
         final var url = new URI(urlBase + "/prazo/v1/nacional/%s?cepOrigem=%s&cepDestino=%s".formatted(codigoServico, cepOrigem, cepDestino));
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrazo.class);
+        } else {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
         }
-        throw new Exception("Verificação de prazo de entrega para servico '%s' retornou código '%s': '%s'".formatted(codigoServico, response.statusCode(), response.body()));
     }
 
     // Preço
 
-    public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, int pesoGramas, T3WCorreiosFormatoObjeto tipoObjeto, int comprimentoCm, int alturaCm, int larguraCm, int diametroCm, BigDecimal valorDeclarado, final Set<T3WCorreiosPrecoServicoAdicional> servicosAdicionais) throws Exception {
+    /**
+     * Método que calcula o preço de um serviço de entrega dos Correios.
+     *
+     * @param codigoServico       Código do serviço de entrega.
+     * @param cepOrigem           CEP de origem.
+     * @param cepDestino          CEP de destino.
+     * @param pesoGramas          Peso do objeto em gramas.
+     * @param tipoObjeto          Tipo do objeto de envio.
+     * @param comprimentoCm      Comprimento do objeto em centímetros.
+     * @param alturaCm            Altura do objeto em centímetros.
+     * @param larguraCm           Largura do objeto em centímetros.
+     * @param diametroCm          Diâmetro do objeto em centímetros.
+     * @param valorDeclarado      Valor declarado do objeto.
+     * @param servicosAdicionais  Serviços adicionais solicitados.
+     * @return Objeto {@link T3WCorreiosPreco} representando o preço do serviço.
+     * @throws Exception                  Se ocorrer um erro durante o cálculo do preço.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante o cálculo do preço.*/
+
+    public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, int pesoGramas, T3WCorreiosFormatoObjeto tipoObjeto, int comprimentoCm, int alturaCm, int larguraCm, int diametroCm, BigDecimal valorDeclarado, final Set<T3WCorreiosPrecoServicoAdicional> servicosAdicionais) throws Exception, T3WCorreiosResponseDefault {
         this.getLogger().debug("Solicitando preço para servico {}, origem {}, destino {}, peso {}g...", codigoServico, cepOrigem, cepDestino, pesoGramas);
 
         //se houver o valor declarado, tenho que adicionar nos servicos adicionais
@@ -179,12 +271,21 @@ public class T3WCorreios implements T3WLoggable {
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPreco.class);
+        } else {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
         }
-        throw new Exception("Verificação de preco de envio retornou código '%s': '%s'".formatted(response.statusCode(), response.body()));
     }
 
     // Prepostagem
 
+    /**
+     * Método que cria uma pré-postagem.
+     *
+     * @param prepostagem Objeto {@link T3WCorreiosPrepostagem} contendo os dados da pré-postagem a ser criada.
+     * @return Objeto {@link T3WCorreiosPrepostagem} representando a pré-postagem criada.
+     * @throws Exception                  Se ocorrer um erro durante o processo de criação.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante a criação.
+     */
     public T3WCorreiosPrepostagem criarPrepostagem(T3WCorreiosPrepostagem prepostagem) throws Exception, T3WCorreiosResponseDefault {
         final var url = new URI(urlBase + "/prepostagem/v1/prepostagens");
         final var response = sendPostRequest(url, prepostagem);
@@ -290,7 +391,6 @@ public class T3WCorreios implements T3WLoggable {
         final List<T3WCorreiosContrato> contratos = new ArrayList<>();
         for (T3WCorreiosContratoStatus correiosContratoStatus : T3WCorreiosContratoStatus.values()) {
             try {
-                contratos.addAll(this.consultarContratos(cnpj, correiosContratoStatus, true));
                 contratos.addAll(this.consultarContratos(cnpj, correiosContratoStatus, false));
             } catch (T3WCorreiosResponseDefault e) {
                 this.getLogger().info("Consulta de contratos com status '{}' não obteve resultados. Motivo: '{}'", correiosContratoStatus, e.getMessage());
@@ -382,7 +482,6 @@ public class T3WCorreios implements T3WLoggable {
         final List<T3WCorreiosContratoCartaoPostagem> cartoes = new ArrayList<>();
         for (T3WCorreiosContratoCartaoStatus correiosCartoesStatus : T3WCorreiosContratoCartaoStatus.values()) {
             try {
-                cartoes.addAll(this.consultarCartoesPostagemByContrato(cnpj, numeroContrato, correiosCartoesStatus, true));
                 cartoes.addAll(this.consultarCartoesPostagemByContrato(cnpj, numeroContrato, correiosCartoesStatus, false));
             } catch (T3WCorreiosResponseDefault e) {
                 this.getLogger().info("Consulta de cartões postagem com status '{}' não obteve retornos. Motivo: '{}'", correiosCartoesStatus, e.getMessage());
