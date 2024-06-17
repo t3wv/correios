@@ -47,4 +47,13 @@ public class T3WCorreiosPrepostagemResponseCancelamento {
         this.idRecibo = idRecibo;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "T3WCorreiosPrepostagemResponseCancelamento{" +
+               "resultadoCancelamento='" + resultadoCancelamento + '\'' +
+               ", mensagem='" + mensagem + '\'' +
+               ", idRecibo='" + idRecibo + '\'' +
+               '}';
+    }
 }
