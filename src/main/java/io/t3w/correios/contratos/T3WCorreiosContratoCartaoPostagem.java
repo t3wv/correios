@@ -12,22 +12,22 @@ public class T3WCorreiosContratoCartaoPostagem {
     private String cnpj;
 
     @JsonProperty("nuContrato")
-    private String nuContrato;
+    private String numeroContrato;
 
     @JsonProperty("nuSe")
-    private Long nuSe;
+    private Long numeroSe;
 
     @JsonProperty("nuCartaoPostagem")
-    private String nuCartaoPostagem;
+    private String numeroCartaoPostagem;
 
     @JsonProperty("cnpjCartao")
     private String cnpjCartao;
 
     @JsonProperty("dtInicioVigencia")
-    private LocalDateTime dtInicioVigencia;
+    private LocalDateTime dataInicioVigencia;
 
     @JsonProperty("dtFimVigencia")
-    private LocalDateTime dtFimVigencia;
+    private LocalDateTime dataFimVigencia;
 
     @JsonProperty("status")
     private T3WCorreiosContratoCartaoStatus status;
@@ -35,14 +35,14 @@ public class T3WCorreiosContratoCartaoPostagem {
     public T3WCorreiosContratoCartaoPostagem() {
     }
 
-    public T3WCorreiosContratoCartaoPostagem(String cnpj, String nuContrato, Long nuSe, String nuCartaoPostagem, String cnpjCartao, LocalDateTime dtInicioVigencia, LocalDateTime dtFimVigencia) {
+    public T3WCorreiosContratoCartaoPostagem(String cnpj, String numeroContrato, Long numeroSe, String numeroCartaoPostagem, String cnpjCartao, LocalDateTime dataInicioVigencia, LocalDateTime dataFimVigencia) {
         this.cnpj = cnpj;
-        this.nuContrato = nuContrato;
-        this.nuSe = nuSe;
-        this.nuCartaoPostagem = nuCartaoPostagem;
+        this.numeroContrato = numeroContrato;
+        this.numeroSe = numeroSe;
+        this.numeroCartaoPostagem = numeroCartaoPostagem;
         this.cnpjCartao = cnpjCartao;
-        this.dtInicioVigencia = dtInicioVigencia;
-        this.dtFimVigencia = dtFimVigencia;
+        this.dataInicioVigencia = dataInicioVigencia;
+        this.dataFimVigencia = dataFimVigencia;
     }
 
     public String getCnpj() {
@@ -54,30 +54,30 @@ public class T3WCorreiosContratoCartaoPostagem {
         return this;
     }
 
-    public String getNuContrato() {
-        return nuContrato;
+    public String getNumeroContrato() {
+        return numeroContrato;
     }
 
-    public T3WCorreiosContratoCartaoPostagem setNuContrato(String nuContrato) {
-        this.nuContrato = nuContrato;
+    public T3WCorreiosContratoCartaoPostagem setNumeroContrato(String numeroContrato) {
+        this.numeroContrato = numeroContrato;
         return this;
     }
 
-    public Long getNuSe() {
-        return nuSe;
+    public Long getNumeroSe() {
+        return numeroSe;
     }
 
-    public T3WCorreiosContratoCartaoPostagem setNuSe(Long nuSe) {
-        this.nuSe = nuSe;
+    public T3WCorreiosContratoCartaoPostagem setNumeroSe(Long numeroSe) {
+        this.numeroSe = numeroSe;
         return this;
     }
 
-    public String getNuCartaoPostagem() {
-        return nuCartaoPostagem;
+    public String getNumeroCartaoPostagem() {
+        return numeroCartaoPostagem;
     }
 
-    public T3WCorreiosContratoCartaoPostagem setNuCartaoPostagem(String nuCartaoPostagem) {
-        this.nuCartaoPostagem = nuCartaoPostagem;
+    public T3WCorreiosContratoCartaoPostagem setNumeroCartaoPostagem(String numeroCartaoPostagem) {
+        this.numeroCartaoPostagem = numeroCartaoPostagem;
         return this;
     }
 
@@ -90,21 +90,21 @@ public class T3WCorreiosContratoCartaoPostagem {
         return this;
     }
 
-    public LocalDateTime getDtInicioVigencia() {
-        return dtInicioVigencia;
+    public LocalDateTime getDataInicioVigencia() {
+        return dataInicioVigencia;
     }
 
-    public T3WCorreiosContratoCartaoPostagem setDtInicioVigencia(LocalDateTime dtInicioVigencia) {
-        this.dtInicioVigencia = dtInicioVigencia;
+    public T3WCorreiosContratoCartaoPostagem setDataInicioVigencia(LocalDateTime dataInicioVigencia) {
+        this.dataInicioVigencia = dataInicioVigencia;
         return this;
     }
 
-    public LocalDateTime getDtFimVigencia() {
-        return dtFimVigencia;
+    public LocalDateTime getDataFimVigencia() {
+        return dataFimVigencia;
     }
 
-    public T3WCorreiosContratoCartaoPostagem setDtFimVigencia(LocalDateTime dtFimVigencia) {
-        this.dtFimVigencia = dtFimVigencia;
+    public T3WCorreiosContratoCartaoPostagem setDataFimVigencia(LocalDateTime dataFimVigencia) {
+        this.dataFimVigencia = dataFimVigencia;
         return this;
     }
 

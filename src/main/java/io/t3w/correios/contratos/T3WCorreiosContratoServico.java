@@ -12,18 +12,18 @@ public class T3WCorreiosContratoServico {
     private String descricao;
 
     @JsonProperty("coSegmento")
-    private String coSegmento;
+    private String codigoSegmento;
 
     @JsonProperty("descSegmento")
-    private String descSegmento;
+    private String descricaoSegmento;
 
     public T3WCorreiosContratoServico() {}
 
-    public T3WCorreiosContratoServico(String codigo, String descricao, String coSegmento, String descSegmento) {
+    public T3WCorreiosContratoServico(String codigo, String descricao, String codigoSegmento, String descricaoSegmento) {
         this.codigo = codigo;
         this.descricao = descricao;
-        this.coSegmento = coSegmento;
-        this.descSegmento = descSegmento;
+        this.codigoSegmento = codigoSegmento;
+        this.descricaoSegmento = descricaoSegmento;
     }
 
     public String getCodigo() {
@@ -44,21 +44,21 @@ public class T3WCorreiosContratoServico {
         return this;
     }
 
-    public String getCoSegmento() {
-        return coSegmento;
+    public String getCodigoSegmento() {
+        return codigoSegmento;
     }
 
-    public T3WCorreiosContratoServico setCoSegmento(String coSegmento) {
-        this.coSegmento = coSegmento;
+    public T3WCorreiosContratoServico setCodigoSegmento(String codigoSegmento) {
+        this.codigoSegmento = codigoSegmento;
         return this;
     }
 
-    public String getDescSegmento() {
-        return descSegmento;
+    public String getDescricaoSegmento() {
+        return descricaoSegmento;
     }
 
-    public T3WCorreiosContratoServico setDescSegmento(String descSegmento) {
-        this.descSegmento = descSegmento;
+    public T3WCorreiosContratoServico setDescricaoSegmento(String descricaoSegmento) {
+        this.descricaoSegmento = descricaoSegmento;
         return this;
     }
 }

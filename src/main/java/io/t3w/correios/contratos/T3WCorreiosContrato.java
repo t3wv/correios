@@ -12,22 +12,22 @@ public class T3WCorreiosContrato {
     private String cnpj;
 
     @JsonProperty("nuContrato")
-    private String nuContrato;
+    private String numeroContrato;
 
     @JsonProperty("nuSe")
-    private Long nuSe;
+    private Long numeroSe;
 
     @JsonProperty("nuCombo")
-    private Long nuCombo;
+    private Long numeroCombo;
 
     @JsonProperty("categoria")
     private String categoria;
 
     @JsonProperty("dtInicioVigencia")
-    private LocalDateTime dtInicioVigencia;
+    private LocalDateTime dataInicioVigencia;
 
     @JsonProperty("dtFimVigencia")
-    private LocalDateTime dtFimVigencia;
+    private LocalDateTime dataFimVigencia;
 
     @JsonProperty("status")
     private T3WCorreiosContratoStatus status;
@@ -35,12 +35,12 @@ public class T3WCorreiosContrato {
     public T3WCorreiosContrato() {
     }
 
-    public T3WCorreiosContrato(String cnpj, String nuContrato, Long nuSe, LocalDateTime dtInicioVigencia, LocalDateTime dtFimVigencia, T3WCorreiosContratoStatus status) {
+    public T3WCorreiosContrato(String cnpj, String numeroContrato, Long numeroSe, LocalDateTime dataInicioVigencia, LocalDateTime dataFimVigencia, T3WCorreiosContratoStatus status) {
         this.cnpj = cnpj;
-        this.nuContrato = nuContrato;
-        this.nuSe = nuSe;
-        this.dtInicioVigencia = dtInicioVigencia;
-        this.dtFimVigencia = dtFimVigencia;
+        this.numeroContrato = numeroContrato;
+        this.numeroSe = numeroSe;
+        this.dataInicioVigencia = dataInicioVigencia;
+        this.dataFimVigencia = dataFimVigencia;
         this.status = status;
     }
 
@@ -53,39 +53,39 @@ public class T3WCorreiosContrato {
         return this;
     }
 
-    public String getNuContrato() {
-        return nuContrato;
+    public String getNumeroContrato() {
+        return numeroContrato;
     }
 
-    public T3WCorreiosContrato setNuContrato(String nuContrato) {
-        this.nuContrato = nuContrato;
+    public T3WCorreiosContrato setNumeroContrato(String numeroContrato) {
+        this.numeroContrato = numeroContrato;
         return this;
     }
 
-    public Long getNuSe() {
-        return nuSe;
+    public Long getNumeroSe() {
+        return numeroSe;
     }
 
-    public T3WCorreiosContrato setNuSe(Long nuSe) {
-        this.nuSe = nuSe;
+    public T3WCorreiosContrato setNumeroSe(Long numeroSe) {
+        this.numeroSe = numeroSe;
         return this;
     }
 
-    public LocalDateTime getDtInicioVigencia() {
-        return dtInicioVigencia;
+    public LocalDateTime getDataInicioVigencia() {
+        return dataInicioVigencia;
     }
 
-    public T3WCorreiosContrato setDtInicioVigencia(LocalDateTime dtInicioVigencia) {
-        this.dtInicioVigencia = dtInicioVigencia;
+    public T3WCorreiosContrato setDataInicioVigencia(LocalDateTime dataInicioVigencia) {
+        this.dataInicioVigencia = dataInicioVigencia;
         return this;
     }
 
-    public LocalDateTime getDtFimVigencia() {
-        return dtFimVigencia;
+    public LocalDateTime getDataFimVigencia() {
+        return dataFimVigencia;
     }
 
-    public T3WCorreiosContrato setDtFimVigencia(LocalDateTime dtFimVigencia) {
-        this.dtFimVigencia = dtFimVigencia;
+    public T3WCorreiosContrato setDataFimVigencia(LocalDateTime dataFimVigencia) {
+        this.dataFimVigencia = dataFimVigencia;
         return this;
     }
 
@@ -98,12 +98,12 @@ public class T3WCorreiosContrato {
         return this;
     }
 
-    public Long getNuCombo() {
-        return nuCombo;
+    public Long getNumeroCombo() {
+        return numeroCombo;
     }
 
-    public T3WCorreiosContrato setNuCombo(Long nuCombo) {
-        this.nuCombo = nuCombo;
+    public T3WCorreiosContrato setNumeroCombo(Long numeroCombo) {
+        this.numeroCombo = numeroCombo;
         return this;
     }
 

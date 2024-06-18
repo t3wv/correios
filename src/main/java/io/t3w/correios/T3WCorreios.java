@@ -411,7 +411,7 @@ public class T3WCorreios implements T3WLoggable {
      * @note O parâmetro {@code status} é opcional. Se não informado, retorna por padrão os ativos.
      */
     public List<T3WCorreiosContrato> consultarContratos(final String cnpj, T3WCorreiosContratoStatus status, boolean somenteVigentes) throws Exception, T3WCorreiosResponseDefault {
-        var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "")));
+        var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "N")));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return Arrays.stream(this.objectMapper.readValue(response.body(), T3WCorreiosContrato[].class)).toList();
         } else {
@@ -508,7 +508,7 @@ public class T3WCorreios implements T3WLoggable {
         final var cartoes = new ArrayList<T3WCorreiosContratoCartaoPostagem>();
 
         var uri = (urlBase + "/meucontrato/v1/empresas/%s/contratos/%s/cartoes?status=%s&vigente=%s&page=%s&size=%s");
-        var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(status, ""), somenteVigentes ? "S" : "", page, pageSize)));
+        var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(status, ""), somenteVigentes ? "S" : "N", page, pageSize)));
 
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             var responseParsed = this.objectMapper.readValue(response.body(), T3WCorreiosContratoResponseListagemCartaoPaginado.class);
@@ -516,7 +516,7 @@ public class T3WCorreios implements T3WLoggable {
                 cartoes.addAll(responseParsed.getItens());
                 if (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages())) {
                     page++;
-                    response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(status, ""), somenteVigentes ? "S" : "", page, pageSize)));
+                    response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(status, ""), somenteVigentes ? "S" : "N", page, pageSize)));
                     responseParsed = this.objectMapper.readValue(response.body(), T3WCorreiosContratoResponseListagemCartaoPaginado.class);
                 }
             } while (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages()));
