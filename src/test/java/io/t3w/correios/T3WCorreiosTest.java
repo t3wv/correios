@@ -163,7 +163,7 @@ class T3WCorreiosTest {
         final var contrato = CORREIOS.consultarCategoriaContrato(CNPJ, CONTRATO);
         assertNotNull(contrato);
 
-        System.out.println("Contrato: %s\nCategoria: %s\nNuCombo: %s".formatted(contrato.getNuContrato(), contrato.getCategoria(), contrato.getNuCombo()));
+        System.out.println("Contrato: %s\nCategoria: %s\nNuCombo: %s".formatted(contrato.getNumeroContrato(), contrato.getCategoria(), contrato.getNumeroCombo()));
     }
 
     @Test
@@ -193,4 +193,15 @@ class T3WCorreiosTest {
         }
     }
 
+    @Test
+    void testListarTodosCartoesDeTodosContratos() throws Exception, T3WCorreiosResponseDefault {
+        final var contratos = CORREIOS.consultarContratos(CNPJ);
+        for (final var contrato : contratos) {
+            final var cartoes = CORREIOS.consultarCartoesPostagemByContrato(contrato.getCnpj(), contrato.getNumeroContrato());
+            assertNotNull(cartoes);
+            for (final var cartao : cartoes) {
+                System.out.println(CORREIOS.getObjectMapper().writeValueAsString(cartao));
+            }
+        }
+    }
 }
