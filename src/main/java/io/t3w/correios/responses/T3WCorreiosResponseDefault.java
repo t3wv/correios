@@ -41,4 +41,8 @@ public class T3WCorreiosResponseDefault extends Throwable {
     public String getMessage() {
         return this.msgs != null ? String.join(", ", this.msgs) : "???";
     }
+
+    public String[] getMsgs() {
+        return msgs;
+    }
 }
