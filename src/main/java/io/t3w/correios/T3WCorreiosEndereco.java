@@ -108,4 +108,18 @@ public class T3WCorreiosEndereco {
     public void setPais(String pais) {
         this.pais = pais;
     }
+
+    @Override
+    public String toString() {
+        return "T3WCorreiosEndereco{" +
+               "cep='" + cep + '\'' +
+               ", logradouro='" + logradouro + '\'' +
+               ", numero='" + numero + '\'' +
+               ", complemento='" + complemento + '\'' +
+               ", bairro='" + bairro + '\'' +
+               ", cidade='" + cidade + '\'' +
+               ", uf='" + uf + '\'' +
+               ", pais='" + pais + '\'' +
+               '}';
+    }
 }

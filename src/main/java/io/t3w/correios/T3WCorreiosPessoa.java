@@ -146,4 +146,20 @@ public class T3WCorreiosPessoa {
         this.endereco = endereco;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "T3WCorreiosPessoa{" +
+               "nome='" + nome + '\'' +
+               ", dddTelefone='" + dddTelefone + '\'' +
+               ", telefone='" + telefone + '\'' +
+               ", dddCelular='" + dddCelular + '\'' +
+               ", celular='" + celular + '\'' +
+               ", email='" + email + '\'' +
+               ", cpfCnpj='" + cpfCnpj + '\'' +
+               ", documentoEstrangeiro='" + documentoEstrangeiro + '\'' +
+               ", obs='" + obs + '\'' +
+               ", endereco=" + endereco +
+               '}';
+    }
 }
