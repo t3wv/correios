@@ -35,13 +35,6 @@ class T3WCorreiosTest {
         CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, false);
     }
 
-//    @Test
-//    void testRequestBearerToken() throws Exception {
-//        final var requestToken = CORREIOS.requestBearerToken();
-//        assertNotNull(requestToken);
-//        assertFalse(requestToken.getToken().isEmpty());
-//    }
-
     @Disabled
     @Test
     void testRastreamentoObjetos() throws Exception, T3WCorreiosResponseDefault {
