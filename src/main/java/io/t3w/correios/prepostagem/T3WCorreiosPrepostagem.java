@@ -87,6 +87,9 @@ public class T3WCorreiosPrepostagem {
     @JsonProperty("dataPrevistaPostagem")
     private String dataPrevistaPostagem;
 
+    @JsonProperty("prazoPostagem")
+    private String prazoPostagem;
+
     @JsonProperty("observacao")
     private String observacao;
 
@@ -387,6 +390,42 @@ public class T3WCorreiosPrepostagem {
 
     public T3WCorreiosPrepostagem setModalidadePagamento(String modalidadePagamento) {
         this.modalidadePagamento = modalidadePagamento;
+        return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public T3WCorreiosPrepostagem setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getLogisticaReversa() {
+        return logisticaReversa;
+    }
+
+    public T3WCorreiosPrepostagem setLogisticaReversa(String logisticaReversa) {
+        this.logisticaReversa = logisticaReversa;
+        return this;
+    }
+
+    public String getDataValidadeLogReversa() {
+        return dataValidadeLogReversa;
+    }
+
+    public T3WCorreiosPrepostagem setDataValidadeLogReversa(String dataValidadeLogReversa) {
+        this.dataValidadeLogReversa = dataValidadeLogReversa;
+        return this;
+    }
+
+    public String getPrazoPostagem() {
+        return prazoPostagem;
+    }
+
+    public T3WCorreiosPrepostagem setPrazoPostagem(String prazoPostagem) {
+        this.prazoPostagem = prazoPostagem;
         return this;
     }
 

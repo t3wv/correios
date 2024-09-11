@@ -62,10 +62,10 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Classe principal de consulta à api.
      *
-     * @param userId          ID de usuário dos Correios.
-     * @param apiToken        Token de API dos Correios.
-     * @param cartaoPostagem  Número do cartão de postagem.
-     * @param isProducao      Indica se a consulta será realizada em ambiente de produção.
+     * @param userId         ID de usuário dos Correios.
+     * @param apiToken       Token de API dos Correios.
+     * @param cartaoPostagem Número do cartão de postagem.
+     * @param isProducao     Indica se a consulta será realizada em ambiente de produção.
      * @throws IllegalArgumentException Se os parâmetros de entrada forem inválidos.
      */
     public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isProducao) {
@@ -116,10 +116,10 @@ public class T3WCorreios implements T3WLoggable {
      * Este método é chamado automaticamente quando o token expira ou não existe.
      *
      * @return Objeto {@link T3WCorreiosBearerToken} representando o novo token de autenticação.
-     * @throws Exception Se ocorrer um erro durante a solicitação do token.
+     * @throws Exception              Se ocorrer um erro durante a solicitação do token.
      * @throws IllegalAccessException Se a solicitação de token retornar um código de status inesperado.
      */
-    private T3WCorreiosBearerToken requestBearerToken() throws Exception {
+    private T3WCorreiosBearerToken requestBearerToken() throws Exception, T3WCorreiosResponseDefault {
         if (this.bearerToken == null || this.bearerToken.getExpiraEm().isBefore(LocalDateTime.now())) {
             this.getLogger().debug("Requisitando novo bearer token para usuario '{}', api token '{}' e cartão de postagem '{}'", this.userId, this.apiToken, this.cartaoPostagem);
             final var httpRequest = HttpRequest.newBuilder()
@@ -131,6 +131,8 @@ public class T3WCorreios implements T3WLoggable {
             final var response = this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == HttpURLConnection.HTTP_CREATED) {
                 this.bearerToken = this.objectMapper.readValue(response.body(), T3WCorreiosBearerToken.class);
+            } else if (response.body() != null && !response.body().isBlank()) {
+                throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
             } else {
                 throw new IllegalAccessException("Requisição de bearer token retornou codigo '%s': '%s'".formatted(response.statusCode(), response.body()));
             }
@@ -139,16 +141,16 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     /**
-     * Método privado que envia uma solicitação POST para a API dos correios com cabeçalho:
+     * M&eacute;todo privado que envia uma solicita&ccedil;&atilde;o POST para a API dos correios com cabe&ccedil;alho:
      * <code>Content-Type application/json; charset=utf-8</code> e <code>Authorization Bearer {token}<code>.
      *
-     * @param uri     URI para onde a solicitação será enviada.
-     * @param object  Objeto que será enviado no corpo da solicitação como um JSON.
+     * @param uri    URI para onde a solicita&ccedil;&atilde;o ser&aacute; enviada.
+     * @param object Objeto que ser&aacute; enviado no corpo da solicita&ccedil;&atilde;o como um JSON.
      * @return Objeto {@link HttpResponse} contendo a resposta da API.
-     * @throws Exception Se ocorrer um erro durante o envio da solicitação.
-     * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
+     * @throws Exception Se ocorrer um erro durante o envio da solicita&ccedil;&atilde;o.
+     * @note O tempo limite da solicita&ccedil;&atilde;o &eacute; definido pelo valor de {@link #setTimeout(Duration)}}".
      */
-    private HttpResponse<String> sendPostRequest(final URI uri, final Object object) throws Exception {
+    private HttpResponse<String> sendPostRequest(final URI uri, final Object object) throws Exception, T3WCorreiosResponseDefault {
         return this.client.send(HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(this.objectMapper.writeValueAsString(object)))
                 .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
@@ -166,7 +168,7 @@ public class T3WCorreios implements T3WLoggable {
      * @throws Exception Se ocorrer um erro durante a requisição.
      * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
      */
-    private HttpResponse<String> sendGetRequest(final URI uri) throws Exception {
+    private HttpResponse<String> sendGetRequest(final URI uri) throws Exception, T3WCorreiosResponseDefault {
         return this.client.send(HttpRequest.newBuilder()
                 .GET()
                 .uri(uri)
@@ -184,7 +186,7 @@ public class T3WCorreios implements T3WLoggable {
      * @throws Exception Se ocorrer um erro durante a requisição.
      * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
      */
-    private HttpResponse<String> sendDeleteRequest(final URI uri) throws Exception {
+    private HttpResponse<String> sendDeleteRequest(final URI uri) throws Exception, T3WCorreiosResponseDefault {
         return this.client.send(HttpRequest.newBuilder()
                 .DELETE()
                 .uri(uri)
@@ -210,8 +212,10 @@ public class T3WCorreios implements T3WLoggable {
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return Arrays.asList(this.objectMapper.convertValue(this.objectMapper.readTree(response.body()).get("objetos"), T3WCorreiosSroObjeto[].class));
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -233,8 +237,10 @@ public class T3WCorreios implements T3WLoggable {
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrazo.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -243,20 +249,21 @@ public class T3WCorreios implements T3WLoggable {
     /**
      * Método que calcula o preço de um serviço de entrega dos Correios.
      *
-     * @param codigoServico       Código do serviço de entrega.
-     * @param cepOrigem           CEP de origem.
-     * @param cepDestino          CEP de destino.
-     * @param pesoGramas          Peso do objeto em gramas.
-     * @param tipoObjeto          Tipo do objeto de envio.
+     * @param codigoServico      Código do serviço de entrega.
+     * @param cepOrigem          CEP de origem.
+     * @param cepDestino         CEP de destino.
+     * @param pesoGramas         Peso do objeto em gramas.
+     * @param tipoObjeto         Tipo do objeto de envio.
      * @param comprimentoCm      Comprimento do objeto em centímetros.
-     * @param alturaCm            Altura do objeto em centímetros.
-     * @param larguraCm           Largura do objeto em centímetros.
-     * @param diametroCm          Diâmetro do objeto em centímetros.
-     * @param valorDeclarado      Valor declarado do objeto.
-     * @param servicosAdicionais  Serviços adicionais solicitados.
+     * @param alturaCm           Altura do objeto em centímetros.
+     * @param larguraCm          Largura do objeto em centímetros.
+     * @param diametroCm         Diâmetro do objeto em centímetros.
+     * @param valorDeclarado     Valor declarado do objeto.
+     * @param servicosAdicionais Serviços adicionais solicitados.
      * @return Objeto {@link T3WCorreiosPreco} representando o preço do serviço.
      * @throws Exception                  Se ocorrer um erro durante o cálculo do preço.
-     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante o cálculo do preço.*/
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante o cálculo do preço.
+     */
 
     public T3WCorreiosPreco calcularPreco(final String codigoServico, final String cepOrigem, String cepDestino, int pesoGramas, T3WCorreiosFormatoObjeto tipoObjeto, int comprimentoCm, int alturaCm, int larguraCm, int diametroCm, BigDecimal valorDeclarado, final Set<T3WCorreiosPrecoServicoAdicional> servicosAdicionais) throws Exception, T3WCorreiosResponseDefault {
         this.getLogger().debug("Solicitando preço para servico {}, origem {}, destino {}, peso {}g...", codigoServico, cepOrigem, cepDestino, pesoGramas);
@@ -271,8 +278,10 @@ public class T3WCorreios implements T3WLoggable {
         final var response = this.sendGetRequest(url);
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPreco.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -291,8 +300,10 @@ public class T3WCorreios implements T3WLoggable {
         final var response = sendPostRequest(url, prepostagem);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagem.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -310,8 +321,10 @@ public class T3WCorreios implements T3WLoggable {
 
         if (response.statusCode() == HttpsURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagemMovimentacao.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -356,8 +369,10 @@ public class T3WCorreios implements T3WLoggable {
                 }
             } while (responseParsed.getPage().getNext());
             return prepostagens;
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -375,8 +390,10 @@ public class T3WCorreios implements T3WLoggable {
         final var response = this.sendDeleteRequest(url);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagemResponseCancelamento.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -387,7 +404,7 @@ public class T3WCorreios implements T3WLoggable {
      *
      * @param cnpj Cnpj da empresa.
      */
-    public List<T3WCorreiosContrato> consultarContratos(final String cnpj) throws Exception, T3WCorreiosResponseDefault {
+    public List<T3WCorreiosContrato> consultarContratos(final String cnpj) throws Exception {
         final List<T3WCorreiosContrato> contratos = new ArrayList<>();
         for (T3WCorreiosContratoStatus correiosContratoStatus : T3WCorreiosContratoStatus.values()) {
             try {
@@ -414,8 +431,10 @@ public class T3WCorreios implements T3WLoggable {
         var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%s/contratos?status=%s&vigente=%s".formatted(cnpj, Objects.toString(status, ""), somenteVigentes ? "S" : "N")));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return Arrays.stream(this.objectMapper.readValue(response.body(), T3WCorreiosContrato[].class)).toList();
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -449,8 +468,10 @@ public class T3WCorreios implements T3WLoggable {
                 }
             } while (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages()));
             return servicos;
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -467,8 +488,10 @@ public class T3WCorreios implements T3WLoggable {
         var response = this.sendGetRequest(new URI(urlBase + "/meucontrato/v1/empresas/%S/contratos/%s/categoria".formatted(cnpj, numeroContrato)));
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosContrato.class);
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
 
@@ -521,10 +544,10 @@ public class T3WCorreios implements T3WLoggable {
                 }
             } while (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages()));
             return cartoes;
-        } else {
+        } else if (response.body() != null && !response.body().isBlank()) {
             throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
     }
-
-    // todo: GENERALIZAR RESPOSTAS PAGINADAS
 }
