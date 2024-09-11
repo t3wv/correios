@@ -3,6 +3,7 @@ package io.t3w.correios;
 import io.t3w.correios.contratos.T3WCorreiosContrato;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagem;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -130,6 +132,24 @@ class T3WCorreiosTest {
     @Test
     void testCancelarPrepostagem() throws Exception, T3WCorreiosResponseDefault {
         assertNotNull(CORREIOS.cancelarPrePostagem(USER_ID, "XPTO"));
+    }
+
+    @Disabled
+    @Test
+    void testSolicitarRotulo() throws Exception, T3WCorreiosResponseDefault {
+        final var rotuloSolicitacao = new T3WCorreiosPrepostagemRequisicaoRotulo();
+        rotuloSolicitacao.setIdCorreios(USER_ID)
+                .setNumeroCartaoPostagem(CARTAO_POSTAGEM)
+                .setCodigosObjeto(List.of("AB033948628BR"))
+                .setTipoRotulo("P")
+                .setFormatoRotulo("P");
+
+        final var pdfByteArray = CORREIOS.baixarRotulo(CORREIOS.solicitarRotulo(rotuloSolicitacao));
+        assertNotNull(pdfByteArray);
+
+        final FileOutputStream fos = new FileOutputStream("/tmp/%s".formatted("teste.pdf"));
+        fos.write(pdfByteArray);
+        fos.close();
     }
 
     @Test

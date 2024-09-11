@@ -14,6 +14,7 @@ import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemCartaoPaginado;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemServicosPaginado;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
 import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.prazo.T3WCorreiosPrazo;
@@ -36,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -395,6 +397,51 @@ public class T3WCorreios implements T3WLoggable {
         } else {
             throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
+    }
+
+    /**
+     * Método que solicita a etiqueta de postagem de um objeto registrado criado por uma prepostagem.
+     *
+     * @param rotulo Objeto {@link T3WCorreiosPrepostagemRequisicaoRotulo} contendo as informações necessárias para solicitar o rótulo.
+     * @return Identificador do recibo da solicitação de rótulo.
+     **/
+    public String solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo rotulo) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/rotulo/assincrono/pdf");
+        final var response = sendPostRequest(url, rotulo);
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.objectMapper.readTree(response.body()).get("idRecibo") != null ? this.objectMapper.readTree(response.body()).get("idRecibo").asText() : null;
+        } else if (response.body() != null && !response.body().isBlank()) {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    /**
+     * Método que faz download da etiqueta gerada através do método {@link  T3WCorreios#solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo)}
+     *
+     * @param idRecibo
+     * @return Array de bytes contendo os dados da etiqueta.
+     * @throws Exception
+     * @throws T3WCorreiosResponseDefault
+     */
+
+    public byte[] baixarRotulo(String idRecibo) throws Exception, T3WCorreiosResponseDefault {
+        final var tentativas = 5;
+        final var timeoutTentativaSolicitacaoRotulo = 3;
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/rotulo/download/assincrono/%s".formatted(idRecibo));
+        var response = sendGetRequest(url);
+
+        for (int i = 0; i < tentativas; i++) {
+            if (response.statusCode() == 200) {
+                System.out.println(response.body());
+                return  Base64.getDecoder().decode(this.objectMapper.readTree(response.body()).get("dados").asText());
+            } else {
+                TimeUnit.SECONDS.sleep(timeoutTentativaSolicitacaoRotulo);
+                response = sendGetRequest(url);
+            }
+        }
+        return new byte[0];
     }
 
     // contratos
