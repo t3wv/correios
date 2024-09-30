@@ -69,7 +69,7 @@
     <properties>
         <java.version>17</java.version>
         <slf4j.version>2.0.13</slf4j.version>
-        <jackson.version>2.17.2</jackson.version>
+        <jackson.version>2.18.0</jackson.version>
         <junit.version>5.10.3</junit.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
