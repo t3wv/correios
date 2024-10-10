@@ -3,6 +3,7 @@ package io.t3w.correios;
 import io.t3w.correios.contratos.T3WCorreiosContrato;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
+import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class T3WCorreiosTest {
 
-    private static String CNPJ, USER_ID, API_TOKEN, CARTAO_POSTAGEM, CONTRATO;
+    private static String CNPJ, USER_ID, API_TOKEN, CARTAO_POSTAGEM, CONTRATO, DRSE_CONTRATO;
     private static T3WCorreios CORREIOS;
 
     @BeforeAll
@@ -34,7 +35,8 @@ class T3WCorreiosTest {
         CARTAO_POSTAGEM = System.getenv("CORREIOS_CARTAO_POSTAGEM");
         CNPJ = System.getenv("CORREIOS_CNPJ");
         CONTRATO = System.getenv("CORREIOS_CONTRATO");
-        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, false);
+        DRSE_CONTRATO = System.getenv("CORREIOS_DRSE_CONTRATO");
+        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
     }
 
     @Disabled
@@ -216,5 +218,22 @@ class T3WCorreiosTest {
                 System.out.println(CORREIOS.getObjectMapper().writeValueAsString(cartao));
             }
         }
+    }
+
+    @Test
+    void testSolicitarGerarPreviaFatura() throws Exception, T3WCorreiosResponseDefault {
+        final T3WCorreiosFaturaProcessoAssincrono processoAssincrono = CORREIOS.solicitarPreviaFatura("ANALITICO", CONTRATO, DRSE_CONTRATO, null);
+
+        assertNotNull(processoAssincrono);
+        assertNotNull(processoAssincrono.getId());
+        assertFalse(processoAssincrono.getId().isBlank());
+    }
+
+
+    @Test
+    void testBaixarFatura() throws Exception, T3WCorreiosResponseDefault {
+        final String faturaCSV = CORREIOS.baixarFatura("00000000-0000-0000-0000-000000000000");
+        assertNotNull(faturaCSV);
+        assertFalse(faturaCSV.isBlank());
     }
 }

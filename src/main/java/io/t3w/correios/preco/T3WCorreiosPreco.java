@@ -13,6 +13,7 @@ public class T3WCorreiosPreco {
 
     @JsonProperty("coProduto")
     private String codigo;
+
     @JsonProperty("noProduto")
     private String numero;
 
@@ -21,6 +22,7 @@ public class T3WCorreiosPreco {
 
     @JsonProperty("pcBaseGeral")
     private BigDecimal precoBaseGeral;
+
     @JsonProperty("peVariacao")
     private BigDecimal percentualVariacao;
 
@@ -103,7 +105,8 @@ public class T3WCorreiosPreco {
     private List<T3WCorreiosPrecoTaxaExtra> taxaExtra;
 
 
-    public T3WCorreiosPreco() {}
+    public T3WCorreiosPreco() {
+    }
 
     public T3WCorreiosPreco(String codigo, String numero, BigDecimal precoBase, BigDecimal precoBaseGeral, BigDecimal percentualVariacao, BigDecimal precoReferencia, List<T3WCorreiosPrecoBeneficios> beneficios, BigDecimal valorBaseCalculoImposto, String numeroRequisicao, boolean inPesoCubico, BigDecimal pesoCobrado, List<T3WCorreiosPrecoServicoAdicional> servicosAdicionais, BigDecimal percentualAdValorem, BigDecimal valorSeguroAutomatico, String quantidadeAdicional, BigDecimal precoFaixa, BigDecimal precoCadaAdicional, BigDecimal precoTotalAdicional, BigDecimal precoFaixaVariacao, BigDecimal precoCadaAdicionalVariacao, BigDecimal precoTotalAdicionalVariacao, BigDecimal valorTotalDescontosVariacao, BigDecimal valorTotalBeneficios, BigDecimal precoProduto, BigDecimal precoTotalServicosAdicionais, BigDecimal precoFinal, String txErro, List<T3WCorreiosPrecoInformacaoAdicional> informacoesAdicionais, String nomeProduto, BigDecimal percentualIsencaoServicosArmazenagem, List<T3WCorreiosPrecoTaxaExtra> taxaExtra) {
         this.codigo = codigo;
@@ -230,7 +233,7 @@ public class T3WCorreiosPreco {
     }
 
     @JsonProperty("inPesoCubico")
-    private T3WCorreiosPreco setInPesoCubico(String inPesoCubico){
+    private T3WCorreiosPreco setInPesoCubico(String inPesoCubico) {
         this.setInPesoCubico(inPesoCubico.equals("S"));
         return this;
     }
