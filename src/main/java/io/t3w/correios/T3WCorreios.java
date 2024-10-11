@@ -15,6 +15,7 @@ import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemCartaoPaginado;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemServicosPaginado;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
+import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
 import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
@@ -610,9 +611,29 @@ public class T3WCorreios implements T3WLoggable {
      * @throws Exception                  Se ocorrer um erro durante o processo.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
      */
-    public T3WCorreiosFaturaProcessoAssincrono solicitarPreviaFatura(String tipoPrevia, String numeroContrato, String drContrato, String centroCusto) throws Exception, T3WCorreiosResponseDefault {
-        final var url = new URI(urlBase + "/faturas/v1/previas?tipoPrevia=%s&contrato=%s&dr=%s%s".formatted(tipoPrevia, numeroContrato, drContrato, centroCusto != null && !centroCusto.isBlank() ? "&centroCusto=%s".formatted(centroCusto) : ""));
+    public T3WCorreiosFaturaProcessoAssincrono solicitarPreviaFatura(T3WCorreiosFaturasTipoPrevia tipoPrevia, String numeroContrato, String drContrato, String centroCusto) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/faturas/v1/previas?tipoPrevia=%s&contrato=%s&dr=%s%s".formatted(tipoPrevia.name(), numeroContrato, drContrato, centroCusto != null && !centroCusto.isBlank() ? "&centroCusto=%s".formatted(centroCusto) : ""));
         final var response = sendPostRequest(url, "");
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.objectMapper.readValue(response.body(), T3WCorreiosFaturaProcessoAssincrono.class);
+        } else if (response.body() != null && !response.body().isBlank()) {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    /**
+     * Método que verifica o status de processamento de uma solicitação de fatura gerada previamente
+     *
+     * @param idProcessamento Id da solicitação de processamento gerada anteriormente
+     * @return Objeto {@link T3WCorreiosFaturaProcessoAssincrono} objeto representando a solicitação.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public T3WCorreiosFaturaProcessoAssincrono verificarProcessamentoSolicitacaoFatura(String idProcessamento) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/faturas/v1/processamentos/%s".formatted(idProcessamento));
+        final var response = sendGetRequest(url);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosFaturaProcessoAssincrono.class);
         } else if (response.body() != null && !response.body().isBlank()) {

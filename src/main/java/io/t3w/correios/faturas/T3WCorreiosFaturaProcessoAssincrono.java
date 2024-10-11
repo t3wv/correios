@@ -2,6 +2,8 @@ package io.t3w.correios.faturas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.t3w.correios.faturas.enums.T3WCorreiosFaturasProcessamentoStatus;
+import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoProcessamento;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class T3WCorreiosFaturaProcessoAssincrono {
@@ -10,10 +12,10 @@ public class T3WCorreiosFaturaProcessoAssincrono {
     private String id;
 
     @JsonProperty("tipoProcessamento")
-    private String tipoProcessamento;
+    private T3WCorreiosFaturasTipoProcessamento tipoProcessamento;
 
     @JsonProperty("status")
-    private String status;
+    private T3WCorreiosFaturasProcessamentoStatus status;
 
     @JsonProperty("dataSolicitacao")
     private String dataSolicitacao;
@@ -46,20 +48,20 @@ public class T3WCorreiosFaturaProcessoAssincrono {
         return this;
     }
 
-    public String getTipoProcessamento() {
+    public T3WCorreiosFaturasTipoProcessamento getTipoProcessamento() {
         return tipoProcessamento;
     }
 
-    public T3WCorreiosFaturaProcessoAssincrono setTipoProcessamento(String tipoProcessamento) {
+    public T3WCorreiosFaturaProcessoAssincrono setTipoProcessamento(T3WCorreiosFaturasTipoProcessamento tipoProcessamento) {
         this.tipoProcessamento = tipoProcessamento;
         return this;
     }
 
-    public String getStatus() {
+    public T3WCorreiosFaturasProcessamentoStatus getStatus() {
         return status;
     }
 
-    public T3WCorreiosFaturaProcessoAssincrono setStatus(String status) {
+    public T3WCorreiosFaturaProcessoAssincrono setStatus(T3WCorreiosFaturasProcessamentoStatus status) {
         this.status = status;
         return this;
     }
@@ -118,7 +120,4 @@ public class T3WCorreiosFaturaProcessoAssincrono {
         return this;
     }
 
-    public enum TipoProcessamento {
-        EXTRATO_ANALITICO, PREVIA_SINTETICO, PREVIA_ANALITICO, EXTRATO_ANALITICO_PDF
-    }
 }
