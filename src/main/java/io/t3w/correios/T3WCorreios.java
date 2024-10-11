@@ -624,7 +624,7 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     /**
-     * Método que verifica o status de processamento de uma solicitação de fatura gerada previamente
+     * Método que verifica o processamento de uma solicitação de fatura gerada previamente
      *
      * @param idProcessamento Id da solicitação de processamento gerada anteriormente
      * @return Objeto {@link T3WCorreiosFaturaProcessoAssincrono} objeto representando a solicitação.
