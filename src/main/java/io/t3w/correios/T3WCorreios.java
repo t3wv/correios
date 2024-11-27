@@ -1,6 +1,7 @@
 package io.t3w.correios;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemCartaoPaginado;
 import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemServicosPaginado;
+import io.t3w.correios.faturas.T3WCorreiosFatura;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
@@ -37,7 +39,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -601,6 +605,31 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     /**
+     * Método que consulta as faturas de um contrato emitidas durante um determinado período.
+     *
+     * @param numeroContrato Número do contrato.
+     * @param drContrato     Código DR do contrato, também referenciado em outras partes da api como SE.
+     * @param dataInicial    Data inicial para o período em que as faturas buscadas são relativas.
+     * @param dataFinal      Data final para o período em que as faturas buscadas são relativas.
+     * @return Lista de {@link T3WCorreiosFatura} representando as faturas existentes.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public List<T3WCorreiosFatura> buscaFaturasPorPeriodo(String numeroContrato, String drContrato, LocalDate dataInicial, LocalDate dataFinal) throws Exception, T3WCorreiosResponseDefault {
+        final var dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        final var url = new URI(urlBase + "/faturas/v1/faturas?contrato=%s&dr=%s&dataInicial=%s&dataFinal=%s".formatted(numeroContrato, drContrato, dataInicial.format(dateFormatter), dataFinal.format(dateFormatter)));
+        final var response = sendGetRequest(url);
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.objectMapper.readValue(response.body(), new TypeReference<>() {
+            });
+        } else if (response.body() != null && !response.body().isBlank()) {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    /**
      * Método que solicita a geração da prévia de uma fatura
      *
      * @param tipoPrevia     Tipo da prévia "ANALITICO" ou "SINTETICO"
@@ -613,6 +642,30 @@ public class T3WCorreios implements T3WLoggable {
      */
     public T3WCorreiosFaturaProcessoAssincrono solicitarPreviaFatura(T3WCorreiosFaturasTipoPrevia tipoPrevia, String numeroContrato, String drContrato, String centroCusto) throws Exception, T3WCorreiosResponseDefault {
         final var url = new URI(urlBase + "/faturas/v1/previas?tipoPrevia=%s&contrato=%s&dr=%s%s".formatted(tipoPrevia.name(), numeroContrato, drContrato, centroCusto != null && !centroCusto.isBlank() ? "&centroCusto=%s".formatted(centroCusto) : ""));
+        final var response = sendPostRequest(url, "");
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.objectMapper.readValue(response.body(), T3WCorreiosFaturaProcessoAssincrono.class);
+        } else if (response.body() != null && !response.body().isBlank()) {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    /**
+     * Método que solicita a geração do extrato analítico de uma fatura
+     *
+     * @param fatura        Número da fatura
+     * @param tipoDocumento Tipo de documento da fatura.<b>Obs.:</b> Não consta informações na documentação oficial sobre os outros tipos de documentos existentes ou ao que se refere exatamente.
+     *                      Retirado da descrição do campo no swagger '<i>Tipo do documento. Exemplo: RE (equivale ao R&)</i>'
+     * @param drFatura      Código DR da fatura, também referenciado em outras partes da api como SE.
+     * @param itemFatura    Número do item da fatura.
+     * @return Objeto {@link T3WCorreiosFaturaProcessoAssincrono} representando a solicitação registrada.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public T3WCorreiosFaturaProcessoAssincrono solicitarExtratoAnaliticoFatura(String fatura, String tipoDocumento, String drFatura, String itemFatura) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/faturas/v1/faturas/%s/analitico?tipoDocumento=%s&drFatura=%s&itemFatura=%s".formatted(fatura, tipoDocumento, drFatura, itemFatura));
         final var response = sendPostRequest(url, "");
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
             return this.objectMapper.readValue(response.body(), T3WCorreiosFaturaProcessoAssincrono.class);

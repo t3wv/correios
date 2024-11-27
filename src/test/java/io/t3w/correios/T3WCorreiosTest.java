@@ -3,6 +3,7 @@ package io.t3w.correios;
 import io.t3w.correios.contratos.T3WCorreiosContrato;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoCartaoStatus;
 import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
+import io.t3w.correios.faturas.T3WCorreiosFatura;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +28,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class T3WCorreiosTest {
 
-    private static String CNPJ, USER_ID, API_TOKEN, CARTAO_POSTAGEM, CONTRATO, DRSE_CONTRATO;
+    private static String CNPJ;
+    private static String USER_ID;
+    private static String API_TOKEN;
+    private static String CARTAO_POSTAGEM;
+    private static String CONTRATO;
+    private static String DRSE_CONTRATO;
     private static T3WCorreios CORREIOS;
 
     @BeforeAll
@@ -259,5 +266,20 @@ class T3WCorreiosTest {
         final String faturaCSV = CORREIOS.baixarFatura("00000000-0000-0000-0000-000000000000");
         assertNotNull(faturaCSV);
         assertFalse(faturaCSV.isBlank());
+    }
+
+    @Disabled
+    @Test
+    void testListarFaturasPorPeriodo() throws Exception, T3WCorreiosResponseDefault {
+        final List<T3WCorreiosFatura> faturas = CORREIOS.buscaFaturasPorPeriodo(CONTRATO, DRSE_CONTRATO, LocalDate.now().minusMonths(2), LocalDate.now());
+        assertNotNull(faturas);
+        assertFalse(faturas.isEmpty());
+    }
+
+    @Disabled
+    @Test
+    void testSolicitarExtratoAnaliticoFaturaAssincrono() throws Exception, T3WCorreiosResponseDefault {
+        final T3WCorreiosFaturaProcessoAssincrono solicitacao = CORREIOS.solicitarExtratoAnaliticoFatura("0000000", "RE", DRSE_CONTRATO, "001");
+        assertNotNull(solicitacao);
     }
 }
