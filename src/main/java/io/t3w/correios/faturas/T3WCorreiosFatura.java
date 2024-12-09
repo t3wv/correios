@@ -1,6 +1,7 @@
 package io.t3w.correios.faturas;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.t3w.correios.faturas.enums.T3WCorreiosFaturasStatus;
 
 import java.math.BigDecimal;
 
@@ -28,7 +29,7 @@ public class T3WCorreiosFatura {
     private String cnpjCentroCusto;
 
     @JsonProperty("status")
-    private String status;
+    private T3WCorreiosFaturasStatus status;
 
     @JsonProperty("vencimento")
     private String vencimento;
@@ -67,8 +68,9 @@ public class T3WCorreiosFatura {
     @JsonProperty("dataPagamento")
     private String dataPagamento;
 
-    @JsonProperty("fatura")
-    private String fatura;
+    // Fixme: Consta na documentação, mas não vem no retorno
+    //  @JsonProperty("fatura")
+    //  private String fatura;
 
     @JsonProperty("dr")
     private String dr;
@@ -147,11 +149,9 @@ public class T3WCorreiosFatura {
         this.cnpjCentroCusto = cnpjCentroCusto;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public T3WCorreiosFaturasStatus getStatus() { return status; }
 
-    public void setStatus(String status) {
+    public void setStatus(T3WCorreiosFaturasStatus status) {
         this.status = status;
     }
 
@@ -243,13 +243,11 @@ public class T3WCorreiosFatura {
         this.dataPagamento = dataPagamento;
     }
 
-    public String getFatura() {
-        return fatura;
-    }
+//    public String getFatura() { return fatura; }
 
-    public void setFatura(String fatura) {
-        this.fatura = fatura;
-    }
+//    public void setFatura(String fatura) {
+//        this.fatura = fatura;
+//    }
 
     public String getDr() {
         return dr;
