@@ -620,6 +620,7 @@ public class T3WCorreios implements T3WLoggable {
         final var url = new URI(urlBase + "/faturas/v1/faturas?contrato=%s&dr=%s&dataInicial=%s&dataFinal=%s".formatted(numeroContrato, drContrato, dataInicial.format(dateFormatter), dataFinal.format(dateFormatter)));
         final var response = sendGetRequest(url);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            this.objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
             return this.objectMapper.readValue(response.body(), new TypeReference<>() {
             });
         } else if (response.body() != null && !response.body().isBlank()) {
