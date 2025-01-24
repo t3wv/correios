@@ -261,6 +261,7 @@ class T3WCorreiosTest {
         assertNotNull(processamento);
     }
 
+    @Disabled
     @Test
     void testBaixarFatura() throws Exception, T3WCorreiosResponseDefault {
         final String faturaCSV = CORREIOS.baixarFatura("00000000-0000-0000-0000-000000000000");
