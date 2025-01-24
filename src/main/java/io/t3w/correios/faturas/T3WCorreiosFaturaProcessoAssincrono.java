@@ -20,7 +20,6 @@ public class T3WCorreiosFaturaProcessoAssincrono {
     @JsonProperty("dataSolicitacao")
     private String dataSolicitacao;
 
-
     @JsonProperty("dataInicioProcessamento")
     private String dataInicioProcessamento;
 

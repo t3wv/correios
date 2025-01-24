@@ -73,10 +73,10 @@ public class T3WCorreios implements T3WLoggable {
      * @param userId         ID de usuário dos Correios.
      * @param apiToken       Token de API dos Correios.
      * @param cartaoPostagem Número do cartão de postagem.
-     * @param isProducao     Indica se a consulta será realizada em ambiente de produção.
+     * @param isHomologacao     Indica se a consulta será realizada em ambiente de homologação.
      * @throws IllegalArgumentException Se os parâmetros de entrada forem inválidos.
      */
-    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isProducao) {
+    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isHomologacao) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException("Um ID de usuário válido é necessário para a consulta!");
         }
@@ -90,7 +90,7 @@ public class T3WCorreios implements T3WLoggable {
         this.userId = userId;
         this.apiToken = apiToken;
         this.cartaoPostagem = cartaoPostagem;
-        this.urlBase = isProducao ? URL_BASE_PRODUCAO : URL_BASE_HOMOLOGACAO;
+        this.urlBase = isHomologacao ? URL_BASE_HOMOLOGACAO : URL_BASE_PRODUCAO;
 
         this.setTimeout(Duration.ofSeconds(15));
         this.client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build();
@@ -620,6 +620,7 @@ public class T3WCorreios implements T3WLoggable {
         final var url = new URI(urlBase + "/faturas/v1/faturas?contrato=%s&dr=%s&dataInicial=%s&dataFinal=%s".formatted(numeroContrato, drContrato, dataInicial.format(dateFormatter), dataFinal.format(dateFormatter)));
         final var response = sendGetRequest(url);
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            this.objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
             return this.objectMapper.readValue(response.body(), new TypeReference<>() {
             });
         } else if (response.body() != null && !response.body().isBlank()) {
