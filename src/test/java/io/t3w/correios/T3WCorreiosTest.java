@@ -44,7 +44,7 @@ class T3WCorreiosTest {
         CNPJ = System.getenv("CORREIOS_CNPJ");
         CONTRATO = System.getenv("CORREIOS_CONTRATO");
         DRSE_CONTRATO = System.getenv("CORREIOS_DRSE_CONTRATO");
-        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, false);
+        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
     }
 
     @Disabled
