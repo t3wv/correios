@@ -37,7 +37,7 @@ jobs:
           gpg_passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           nexus_username: ${{ secrets.OSSRH_USERNAME }}
           nexus_password: ${{ secrets.OSSRH_TOKEN }}
-          maven_goals_phases: clean -B release:prepare release:perform -Darguments="-DskipTests" -P ossrh
+          maven_goals_phases: clean -B release:prepare release:perform -Darguments="-DskipTests" -P ossrh -X
         env:
           CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
           CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
