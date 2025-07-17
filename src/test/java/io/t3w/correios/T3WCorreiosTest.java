@@ -6,6 +6,7 @@ import io.t3w.correios.contratos.enums.T3WCorreiosContratoStatus;
 import io.t3w.correios.faturas.T3WCorreiosFatura;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemItemDeclaracaoConteudo;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
@@ -126,6 +127,10 @@ class T3WCorreiosTest {
         final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
         final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC"));
         final var prepostagem = new T3WCorreiosPrepostagem(remetente, destinatario, "03220", "30", "1", "1");
+
+        // Itens da declaração de conteúdo, passou a ser obrigatório o envio, conforme resposta da API do Correios
+        // "NF e declaração de conteúdo: Obrigatório informar a chave da nota fiscal, chave da declaração de conteúdo eletrônica ou os itens da declaração de conteúdo."
+        prepostagem.setItensDeclaracaoConteudo(List.of(new T3WCorreiosPrepostagemItemDeclaracaoConteudo("Teste", 1, BigDecimal.valueOf(10), 600)));
         final T3WCorreiosPrepostagem prepostagemEfetivada = CORREIOS.criarPrepostagem(prepostagem);
     }
 
