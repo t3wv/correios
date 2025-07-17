@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.39-SNAPSHOT</version>
+    <version>1.0.41-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -68,9 +68,9 @@
     <!-- Propriedades -->
     <properties>
         <java.version>17</java.version>
-        <slf4j.version>2.0.13</slf4j.version>
         <jackson.version>2.18.3</jackson.version>
-        <junit.version>5.11.4</junit.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <junit.version>5.12.1</junit.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -159,7 +159,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.14.0</version>
                     <configuration>
                         <debug>false</debug>
                     </configuration>
@@ -285,7 +285,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.1</version>
+                        <version>3.5.3</version>
                     </plugin>
                 </plugins>
             </build>
