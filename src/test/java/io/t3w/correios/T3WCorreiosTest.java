@@ -45,7 +45,7 @@ class T3WCorreiosTest {
         CNPJ = System.getenv("CORREIOS_CNPJ");
         CONTRATO = System.getenv("CORREIOS_CONTRATO");
         DRSE_CONTRATO = System.getenv("CORREIOS_DRSE_CONTRATO");
-        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
+        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, false);
     }
 
     @Disabled
@@ -130,7 +130,7 @@ class T3WCorreiosTest {
 
         // Itens da declaração de conteúdo, passou a ser obrigatório o envio, conforme resposta da API do Correios
         // "NF e declaração de conteúdo: Obrigatório informar a chave da nota fiscal, chave da declaração de conteúdo eletrônica ou os itens da declaração de conteúdo."
-        prepostagem.setItensDeclaracaoConteudo(List.of(new T3WCorreiosPrepostagemItemDeclaracaoConteudo("Teste", 1, BigDecimal.valueOf(10))));
+        prepostagem.setItensDeclaracaoConteudo(List.of(new T3WCorreiosPrepostagemItemDeclaracaoConteudo("Teste", 1, BigDecimal.valueOf(10), BigDecimal.valueOf(600))));
         final T3WCorreiosPrepostagem prepostagemEfetivada = CORREIOS.criarPrepostagem(prepostagem);
     }
 
