@@ -130,7 +130,7 @@ class T3WCorreiosTest {
 
         // Itens da declaração de conteúdo, passou a ser obrigatório o envio, conforme resposta da API do Correios
         // "NF e declaração de conteúdo: Obrigatório informar a chave da nota fiscal, chave da declaração de conteúdo eletrônica ou os itens da declaração de conteúdo."
-        prepostagem.setItensDeclaracaoConteudo(List.of(new T3WCorreiosPrepostagemItemDeclaracaoConteudo("Teste", 1, BigDecimal.valueOf(10), BigDecimal.valueOf(600))));
+        prepostagem.setItensDeclaracaoConteudo(List.of(new T3WCorreiosPrepostagemItemDeclaracaoConteudo("Teste", 1, BigDecimal.valueOf(10), 600)));
         final T3WCorreiosPrepostagem prepostagemEfetivada = CORREIOS.criarPrepostagem(prepostagem);
     }
 

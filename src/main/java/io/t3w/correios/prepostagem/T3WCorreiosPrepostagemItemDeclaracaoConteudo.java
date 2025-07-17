@@ -43,12 +43,12 @@ public class T3WCorreiosPrepostagemItemDeclaracaoConteudo {
      * Peso total dos itens, em gramas.
      */
     @JsonProperty("peso")
-    private BigDecimal peso;
+    private int peso;
 
     public T3WCorreiosPrepostagemItemDeclaracaoConteudo() {
     }
 
-    public T3WCorreiosPrepostagemItemDeclaracaoConteudo(String conteudo, int quantidade, BigDecimal valor, BigDecimal peso) {
+    public T3WCorreiosPrepostagemItemDeclaracaoConteudo(String conteudo, int quantidade, BigDecimal valor, int peso) {
         this.conteudo = conteudo;
         this.quantidade = quantidade;
         this.valor = valor;
@@ -82,11 +82,11 @@ public class T3WCorreiosPrepostagemItemDeclaracaoConteudo {
         return this;
     }
 
-    public BigDecimal getPeso() {
+    public int getPeso() {
         return peso;
     }
 
-    public T3WCorreiosPrepostagemItemDeclaracaoConteudo setPeso(BigDecimal peso) {
+    public T3WCorreiosPrepostagemItemDeclaracaoConteudo setPeso(int peso) {
         this.peso = peso;
         return this;
     }
