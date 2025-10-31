@@ -18,16 +18,16 @@ import io.t3w.correios.contratos.responses.T3WCorreiosContratoResponseListagemSe
 import io.t3w.correios.faturas.T3WCorreiosFatura;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
-import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
-import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
-import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.prazo.T3WCorreiosPrazo;
 import io.t3w.correios.preco.T3WCorreiosPreco;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
-import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemMovimentacao;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagem;
-import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemMovimentacao;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
+import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
 import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseListagemPaginado;
+import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
+import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -49,13 +49,12 @@ import java.util.stream.Collectors;
 /**
  * Classe responsavel por concentrar as opções de serviços dos Correios.
  */
-public class T3WCorreios implements T3WLoggable {
+public class T3WCorreiosCorreios implements T3WCorreiosLoggable {
 
     private static final String URL_BASE_PRODUCAO = "https://api.correios.com.br";
     private static final String URL_BASE_HOMOLOGACAO = "https://apihom.correios.com.br";
 
     private Duration timeout;
-    private final HttpClient client;
     private final ObjectMapper objectMapper;
     private final String userId;
     private final String apiToken;
@@ -73,10 +72,10 @@ public class T3WCorreios implements T3WLoggable {
      * @param userId         ID de usuário dos Correios.
      * @param apiToken       Token de API dos Correios.
      * @param cartaoPostagem Número do cartão de postagem.
-     * @param isHomologacao     Indica se a consulta será realizada em ambiente de homologação.
+     * @param isHomologacao  Indica se a consulta será realizada em ambiente de homologação.
      * @throws IllegalArgumentException Se os parâmetros de entrada forem inválidos.
      */
-    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isHomologacao) {
+    public T3WCorreiosCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isHomologacao) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException("Um ID de usuário válido é necessário para a consulta!");
         }
@@ -93,7 +92,6 @@ public class T3WCorreios implements T3WLoggable {
         this.urlBase = isHomologacao ? URL_BASE_HOMOLOGACAO : URL_BASE_PRODUCAO;
 
         this.setTimeout(Duration.ofSeconds(15));
-        this.client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build();
         this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         this.objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
         this.objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
@@ -111,10 +109,10 @@ public class T3WCorreios implements T3WLoggable {
      * Define o tempo limite para as solicitações feitas por esta instância.
      *
      * @param timeout Tempo limite. {@see Duration}.
-     * @return A própria instância de {@link T3WCorreios}, permitindo encadeamento de chamadas.
+     * @return A própria instância de {@link T3WCorreiosCorreios}, permitindo encadeamento de chamadas.
      * @note O tempo limite padrão é de 15 segundos.
      */
-    public T3WCorreios setTimeout(Duration timeout) {
+    public T3WCorreiosCorreios setTimeout(Duration timeout) {
         this.timeout = timeout;
         return this;
     }
@@ -130,19 +128,16 @@ public class T3WCorreios implements T3WLoggable {
     private T3WCorreiosBearerToken requestBearerToken() throws Exception, T3WCorreiosResponseDefault {
         if (this.bearerToken == null || this.bearerToken.getExpiraEm().isBefore(LocalDateTime.now())) {
             this.getLogger().debug("Requisitando novo bearer token para usuario '{}', api token '{}' e cartão de postagem '{}'", this.userId, this.apiToken, this.cartaoPostagem);
-            final var httpRequest = HttpRequest.newBuilder()
-                    .uri(new URI(urlBase + "/token/v1/autentica/cartaopostagem"))
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"numero\":\"%s\"}".formatted(cartaoPostagem)))
-                    .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Basic %s".formatted(Base64.getEncoder().encodeToString("%s:%s".formatted(userId, apiToken).getBytes(StandardCharsets.UTF_8)))))
-                    .timeout(this.timeout)
-                    .build();
-            final var response = this.client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == HttpURLConnection.HTTP_CREATED) {
-                this.bearerToken = this.objectMapper.readValue(response.body(), T3WCorreiosBearerToken.class);
-            } else if (response.body() != null && !response.body().isBlank()) {
-                throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
-            } else {
-                throw new IllegalAccessException("Requisição de bearer token retornou codigo '%s': '%s'".formatted(response.statusCode(), response.body()));
+            try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
+                final var request = HttpRequest.newBuilder().uri(new URI(urlBase + "/token/v1/autentica/cartaopostagem")).POST(HttpRequest.BodyPublishers.ofString("{\"numero\":\"%s\"}".formatted(cartaoPostagem))).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Basic %s".formatted(Base64.getEncoder().encodeToString("%s:%s".formatted(userId, apiToken).getBytes(StandardCharsets.UTF_8))))).timeout(this.timeout).build();
+                final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == HttpURLConnection.HTTP_CREATED) {
+                    this.bearerToken = this.objectMapper.readValue(response.body(), T3WCorreiosBearerToken.class);
+                } else if (response.body() != null && !response.body().isBlank()) {
+                    throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+                } else {
+                    throw new IllegalAccessException("Requisição de bearer token retornou codigo '%s': '%s'".formatted(response.statusCode(), response.body()));
+                }
             }
         }
         return bearerToken;
@@ -159,12 +154,9 @@ public class T3WCorreios implements T3WLoggable {
      * @note O tempo limite da solicita&ccedil;&atilde;o &eacute; definido pelo valor de {@link #setTimeout(Duration)}}".
      */
     private HttpResponse<String> sendPostRequest(final URI uri, final Object object) throws Exception, T3WCorreiosResponseDefault {
-        return this.client.send(HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(this.objectMapper.writeValueAsString(object)))
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
-                .timeout(this.timeout)
-                .uri(uri)
-                .build(), HttpResponse.BodyHandlers.ofString());
+        try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
+            return client.send(HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(this.objectMapper.writeValueAsString(object))).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken()))).timeout(this.timeout).uri(uri).build(), HttpResponse.BodyHandlers.ofString());
+        }
     }
 
     /**
@@ -177,12 +169,9 @@ public class T3WCorreios implements T3WLoggable {
      * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
      */
     private HttpResponse<String> sendGetRequest(final URI uri) throws Exception, T3WCorreiosResponseDefault {
-        return this.client.send(HttpRequest.newBuilder()
-                .GET()
-                .uri(uri)
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
-                .timeout(this.timeout)
-                .build(), HttpResponse.BodyHandlers.ofString());
+        try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
+            return client.send(HttpRequest.newBuilder().GET().uri(uri).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken()))).timeout(this.timeout).build(), HttpResponse.BodyHandlers.ofString());
+        }
     }
 
     /**
@@ -195,12 +184,9 @@ public class T3WCorreios implements T3WLoggable {
      * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
      */
     private HttpResponse<String> sendDeleteRequest(final URI uri) throws Exception, T3WCorreiosResponseDefault {
-        return this.client.send(HttpRequest.newBuilder()
-                .DELETE()
-                .uri(uri)
-                .headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken())))
-                .timeout(this.timeout)
-                .build(), HttpResponse.BodyHandlers.ofString());
+        try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
+            return client.send(HttpRequest.newBuilder().DELETE().uri(uri).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken()))).timeout(this.timeout).build(), HttpResponse.BodyHandlers.ofString());
+        }
     }
 
     // Rastro
@@ -424,7 +410,7 @@ public class T3WCorreios implements T3WLoggable {
     }
 
     /**
-     * Método que faz download da etiqueta gerada através do método {@link  T3WCorreios#solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo)}
+     * Método que faz download da etiqueta gerada através do método {@link  T3WCorreiosCorreios#solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo)}
      *
      * @param idRecibo
      * @return Array de bytes contendo os dados da etiqueta.

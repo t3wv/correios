@@ -3,17 +3,12 @@ package io.t3w.correios;
 
 public enum T3WCorreiosFormatoObjeto {
 
-//    Tipo do objeto da postagem: 1 - Envelope, 2 - Pacote; 3 - Rolo.
-
-    ENVELOPE("1","Envelope"),
-
-    PACOTE("2","Pacote"),
-
-    ROLO("3","Rolo");
+    ENVELOPE("1", "Envelope"),
+    PACOTE("2", "Pacote"),
+    ROLO("3", "Rolo");
 
     private final String codigo;
     private final String descricao;
-
 
     T3WCorreiosFormatoObjeto(String codigo, String descricao) {
         this.codigo = codigo;
@@ -30,7 +25,7 @@ public enum T3WCorreiosFormatoObjeto {
 
     public static T3WCorreiosFormatoObjeto valueOfCodigo(String codigo) {
         for (T3WCorreiosFormatoObjeto tipoObjeto : values()) {
-            if(tipoObjeto.getCodigo().equalsIgnoreCase(codigo)){
+            if (tipoObjeto.getCodigo().equalsIgnoreCase(codigo)) {
                 return tipoObjeto;
             }
         }

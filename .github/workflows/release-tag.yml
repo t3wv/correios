@@ -21,11 +21,11 @@ jobs:
         with:
           fallback: 1.0.0
 
-      - name: Set up JDK 17
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Generate Jar
         run: |
@@ -36,7 +36,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN:  ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           tag_name: ${{ steps.previoustag.outputs.tag }}
           release_name: Release ${{ steps.previoustag.outputs.tag }}
@@ -46,7 +46,7 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN:  ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           tag_name: ${{ steps.previoustag.outputs.tag }}
           name: Release ${{ steps.previoustag.outputs.tag }}

@@ -35,7 +35,7 @@ class T3WCorreiosTest {
     private static String CARTAO_POSTAGEM;
     private static String CONTRATO;
     private static String DRSE_CONTRATO;
-    private static T3WCorreios CORREIOS;
+    private static T3WCorreiosCorreios CORREIOS;
 
     @BeforeAll
     public static void preparaTestes() {
@@ -45,7 +45,7 @@ class T3WCorreiosTest {
         CNPJ = System.getenv("CORREIOS_CNPJ");
         CONTRATO = System.getenv("CORREIOS_CONTRATO");
         DRSE_CONTRATO = System.getenv("CORREIOS_DRSE_CONTRATO");
-        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
+        CORREIOS = new T3WCorreiosCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
     }
 
     @Disabled

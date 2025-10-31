@@ -23,7 +23,8 @@ public class T3WCorreiosEndereco {
     @JsonProperty("pais")
     private String pais;
 
-    public T3WCorreiosEndereco() {}
+    public T3WCorreiosEndereco() {
+    }
 
     public T3WCorreiosEndereco(String cep, String logradouro, String numero, String bairro, String cidade, String uf) {
         this.cep = cep;
