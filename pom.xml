@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.43-SNAPSHOT</version>
+    <version>1.0.43</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -44,7 +44,7 @@
         <url>https://github.com/t3wv/correios.git</url>
         <connection>scm:git:https://github.com/t3wv/correios.git</connection>
         <developerConnection>scm:git:https://github.com/t3wv/correios.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v1.0.43</tag>
     </scm>
 
     <!-- Repositorios -->
