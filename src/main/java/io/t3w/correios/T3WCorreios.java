@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 /**
  * Classe responsavel por concentrar as opções de serviços dos Correios.
  */
-public class T3WCorreiosCorreios implements T3WCorreiosLoggable {
+public class T3WCorreios implements T3WCorreiosLoggable {
 
     private static final String URL_BASE_PRODUCAO = "https://api.correios.com.br";
     private static final String URL_BASE_HOMOLOGACAO = "https://apihom.correios.com.br";
@@ -75,7 +75,7 @@ public class T3WCorreiosCorreios implements T3WCorreiosLoggable {
      * @param isHomologacao  Indica se a consulta será realizada em ambiente de homologação.
      * @throws IllegalArgumentException Se os parâmetros de entrada forem inválidos.
      */
-    public T3WCorreiosCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isHomologacao) {
+    public T3WCorreios(final String userId, final String apiToken, final String cartaoPostagem, final boolean isHomologacao) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException("Um ID de usuário válido é necessário para a consulta!");
         }
@@ -109,10 +109,10 @@ public class T3WCorreiosCorreios implements T3WCorreiosLoggable {
      * Define o tempo limite para as solicitações feitas por esta instância.
      *
      * @param timeout Tempo limite. {@see Duration}.
-     * @return A própria instância de {@link T3WCorreiosCorreios}, permitindo encadeamento de chamadas.
+     * @return A própria instância de {@link T3WCorreios}, permitindo encadeamento de chamadas.
      * @note O tempo limite padrão é de 15 segundos.
      */
-    public T3WCorreiosCorreios setTimeout(Duration timeout) {
+    public T3WCorreios setTimeout(Duration timeout) {
         this.timeout = timeout;
         return this;
     }
@@ -410,7 +410,7 @@ public class T3WCorreiosCorreios implements T3WCorreiosLoggable {
     }
 
     /**
-     * Método que faz download da etiqueta gerada através do método {@link  T3WCorreiosCorreios#solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo)}
+     * Método que faz download da etiqueta gerada através do método {@link  T3WCorreios#solicitarRotulo(T3WCorreiosPrepostagemRequisicaoRotulo)}
      *
      * @param idRecibo
      * @return Array de bytes contendo os dados da etiqueta.
