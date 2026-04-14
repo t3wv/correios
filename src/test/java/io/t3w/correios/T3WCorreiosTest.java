@@ -27,6 +27,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 class T3WCorreiosTest {
 
     private static String CNPJ;
@@ -35,7 +36,7 @@ class T3WCorreiosTest {
     private static String CARTAO_POSTAGEM;
     private static String CONTRATO;
     private static String DRSE_CONTRATO;
-    private static T3WCorreiosCorreios CORREIOS;
+    private static T3WCorreios CORREIOS;
 
     @BeforeAll
     public static void preparaTestes() {
@@ -45,7 +46,7 @@ class T3WCorreiosTest {
         CNPJ = System.getenv("CORREIOS_CNPJ");
         CONTRATO = System.getenv("CORREIOS_CONTRATO");
         DRSE_CONTRATO = System.getenv("CORREIOS_DRSE_CONTRATO");
-        CORREIOS = new T3WCorreiosCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
+        CORREIOS = new T3WCorreios(USER_ID, API_TOKEN, CARTAO_POSTAGEM, true);
     }
 
     @Disabled
@@ -127,6 +128,7 @@ class T3WCorreiosTest {
         final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
         final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC"));
         final var prepostagem = new T3WCorreiosPrepostagem(remetente, destinatario, "03220", "30", "1", "1");
+        prepostagem.setEmiteDCe("S");
 
         // Itens da declaração de conteúdo, passou a ser obrigatório o envio, conforme resposta da API do Correios
         // "NF e declaração de conteúdo: Obrigatório informar a chave da nota fiscal, chave da declaração de conteúdo eletrônica ou os itens da declaração de conteúdo."

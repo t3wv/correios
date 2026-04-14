@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.t3wv</groupId>
     <artifactId>correios</artifactId>
-    <version>1.0.44-SNAPSHOT</version>
+    <version>1.0.51-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>correios</name>
@@ -68,9 +68,9 @@
     <!-- Propriedades -->
     <properties>
         <java.version>21</java.version>
-        <jackson.version>2.18.3</jackson.version>
+        <jackson.version>2.21.1</jackson.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.12.1</junit.version>
+        <junit.version>6.0.3</junit.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -179,11 +179,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+                    <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/releases</url>
                 </repository>
             </distributionManagement>
         </profile>
@@ -207,15 +207,14 @@
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
+                            <nexusUrl>https://ossrh-staging-api.central.sonatype.com</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                            <stagingProgressTimeoutMinutes>60</stagingProgressTimeoutMinutes>
                         </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.7</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -255,7 +254,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.1</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -268,7 +267,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.11.2</version>
+                        <version>3.12.0</version>
                         <configuration>
                             <failOnError>false</failOnError>
                             <doclint>none</doclint>
@@ -285,7 +284,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.3</version>
+                        <version>3.5.5</version>
                     </plugin>
                 </plugins>
             </build>
