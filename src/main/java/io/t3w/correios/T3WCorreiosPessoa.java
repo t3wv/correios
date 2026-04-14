@@ -8,14 +8,26 @@ public class T3WCorreiosPessoa {
     @JsonProperty("nome")
     private String nome;
 
+    @JsonProperty("codigo")
+    private String codigo;
+
+    @JsonProperty("indicadorMalote")
+    private String indicadorMalote;
+
     @JsonProperty("dddTelefone")
     private String dddTelefone;
+
+    @JsonProperty("ddiTelefone")
+    private String ddiTelefone;
 
     @JsonProperty("telefone")
     private String telefone;
 
     @JsonProperty("dddCelular")
     private String dddCelular;
+
+    @JsonProperty("ddiCelular")
+    private String ddiCelular;
 
     @JsonProperty("celular")
     private String celular;
@@ -65,12 +77,39 @@ public class T3WCorreiosPessoa {
         return this;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public T3WCorreiosPessoa setCodigo(String codigo) {
+        this.codigo = codigo;
+        return this;
+    }
+
+    public String getIndicadorMalote() {
+        return indicadorMalote;
+    }
+
+    public T3WCorreiosPessoa setIndicadorMalote(String indicadorMalote) {
+        this.indicadorMalote = indicadorMalote;
+        return this;
+    }
+
     public String getDddTelefone() {
         return dddTelefone;
     }
 
     public T3WCorreiosPessoa setDddTelefone(String dddTelefone) {
         this.dddTelefone = dddTelefone;
+        return this;
+    }
+
+    public String getDdiTelefone() {
+        return ddiTelefone;
+    }
+
+    public T3WCorreiosPessoa setDdiTelefone(String ddiTelefone) {
+        this.ddiTelefone = ddiTelefone;
         return this;
     }
 
@@ -89,6 +128,15 @@ public class T3WCorreiosPessoa {
 
     public T3WCorreiosPessoa setDddCelular(String dddCelular) {
         this.dddCelular = dddCelular;
+        return this;
+    }
+
+    public String getDdiCelular() {
+        return ddiCelular;
+    }
+
+    public T3WCorreiosPessoa setDdiCelular(String ddiCelular) {
+        this.ddiCelular = ddiCelular;
         return this;
     }
 
