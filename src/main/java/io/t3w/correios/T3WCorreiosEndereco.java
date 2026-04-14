@@ -20,6 +20,8 @@ public class T3WCorreiosEndereco {
     private String cidade;
     @JsonProperty("uf")
     private String uf;
+    @JsonProperty("regiao")
+    private String regiao;
     @JsonProperty("pais")
     private String pais;
 
@@ -47,67 +49,84 @@ public class T3WCorreiosEndereco {
     }
 
     public String getCep() {
-        return this.cep;
+        return cep;
+    }
+
+    public T3WCorreiosEndereco setCep(String cep) {
+        this.cep = cep;
+        return this;
     }
 
     public String getLogradouro() {
-        return this.logradouro;
+        return logradouro;
+    }
+
+    public T3WCorreiosEndereco setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+        return this;
     }
 
     public String getNumero() {
-        return this.numero;
+        return numero;
+    }
+
+    public T3WCorreiosEndereco setNumero(String numero) {
+        this.numero = numero;
+        return this;
     }
 
     public String getComplemento() {
-        return this.complemento;
+        return complemento;
+    }
+
+    public T3WCorreiosEndereco setComplemento(String complemento) {
+        this.complemento = complemento;
+        return this;
     }
 
     public String getBairro() {
-        return this.bairro;
+        return bairro;
+    }
+
+    public T3WCorreiosEndereco setBairro(String bairro) {
+        this.bairro = bairro;
+        return this;
     }
 
     public String getCidade() {
-        return this.cidade;
+        return cidade;
+    }
+
+    public T3WCorreiosEndereco setCidade(String cidade) {
+        this.cidade = cidade;
+        return this;
     }
 
     public String getUf() {
-        return this.uf;
+        return uf;
+    }
+
+    public T3WCorreiosEndereco setUf(String uf) {
+        this.uf = uf;
+        return this;
+    }
+
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public T3WCorreiosEndereco setRegiao(String regiao) {
+        this.regiao = regiao;
+        return this;
     }
 
     public String getPais() {
-        return this.pais;
+        return pais;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
-
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
-
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public void setUf(String uf) {
-        this.uf = uf;
-    }
-
-    public void setPais(String pais) {
+    public T3WCorreiosEndereco setPais(String pais) {
         this.pais = pais;
+        return this;
     }
 
     @Override

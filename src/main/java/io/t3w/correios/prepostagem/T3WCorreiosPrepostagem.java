@@ -106,6 +106,21 @@ public class T3WCorreiosPrepostagem {
     @JsonProperty("dataValidadeLogReversa")
     private String dataValidadeLogReversa;
 
+    @JsonProperty("codigoObjetoIda")
+    private String codigoObjetoIda;
+
+    @JsonProperty("embalagem")
+    private String embalagem;
+
+    @JsonProperty("emiteDCe")
+    private String emiteDCe;
+
+    @JsonProperty("canalExternoOrigem")
+    private String canalExternoOrigem;
+
+    @JsonProperty("pedidoExternoOrigem")
+    private String pedidoExternoOrigem;
+
     public T3WCorreiosPrepostagem() {}
 
     //todo: {@link T3WCorreiosFormatoObjeto}
@@ -426,6 +441,51 @@ public class T3WCorreiosPrepostagem {
 
     public T3WCorreiosPrepostagem setPrazoPostagem(String prazoPostagem) {
         this.prazoPostagem = prazoPostagem;
+        return this;
+    }
+
+    public String getCodigoObjetoIda() {
+        return codigoObjetoIda;
+    }
+
+    public T3WCorreiosPrepostagem setCodigoObjetoIda(String codigoObjetoIda) {
+        this.codigoObjetoIda = codigoObjetoIda;
+        return this;
+    }
+
+    public String getEmbalagem() {
+        return embalagem;
+    }
+
+    public T3WCorreiosPrepostagem setEmbalagem(String embalagem) {
+        this.embalagem = embalagem;
+        return this;
+    }
+
+    public String getEmiteDCe() {
+        return emiteDCe;
+    }
+
+    public T3WCorreiosPrepostagem setEmiteDCe(String emiteDCe) {
+        this.emiteDCe = emiteDCe;
+        return this;
+    }
+
+    public String getCanalExternoOrigem() {
+        return canalExternoOrigem;
+    }
+
+    public T3WCorreiosPrepostagem setCanalExternoOrigem(String canalExternoOrigem) {
+        this.canalExternoOrigem = canalExternoOrigem;
+        return this;
+    }
+
+    public String getPedidoExternoOrigem() {
+        return pedidoExternoOrigem;
+    }
+
+    public T3WCorreiosPrepostagem setPedidoExternoOrigem(String pedidoExternoOrigem) {
+        this.pedidoExternoOrigem = pedidoExternoOrigem;
         return this;
     }
 

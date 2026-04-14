@@ -128,6 +128,7 @@ class T3WCorreiosTest {
         final var remetente = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC")).setCpfCnpj(CNPJ);
         final var destinatario = new T3WCorreiosPessoa("teste", new T3WCorreiosEndereco("88101000", "Av. Presidente Kennedy", "568", "CAMPINAS", "SAO JOSE", "SC"));
         final var prepostagem = new T3WCorreiosPrepostagem(remetente, destinatario, "03220", "30", "1", "1");
+        prepostagem.setEmiteDCe("S");
 
         // Itens da declaração de conteúdo, passou a ser obrigatório o envio, conforme resposta da API do Correios
         // "NF e declaração de conteúdo: Obrigatório informar a chave da nota fiscal, chave da declaração de conteúdo eletrônica ou os itens da declaração de conteúdo."
