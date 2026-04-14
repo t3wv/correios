@@ -25,29 +25,21 @@ jobs:
       - name: Update dependency graph
         uses: advanced-security/maven-dependency-submission-action@v4.0.3
 
-      - name: Configure Git User
+      - name: Configure Git user
         run: |
           git config user.email "oss@t3w.io"
-          git config user.name "t3wv"
+          git config user.name "T3W Continuous Integration"
 
-      - name: Publish to Maven Central
-        uses: samuelmeuli/action-maven-publish@v1.4.0
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
         with:
           gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg_passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           nexus_username: ${{ secrets.OSSRH_USERNAME }}
           nexus_password: ${{ secrets.OSSRH_TOKEN }}
-          maven_goals_phases: clean -B release:prepare release:perform -Darguments="-DskipTests" -P ossrh -X
-        env:
-          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
-          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
-          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+          maven_goals_phases: clean -B release:prepare release:perform -Darguments="-DskipTests" -P ossrh
 
-      - name: Publish to GitHub Packages
-        run: |
-          mvn -B deploy -P github
+      - name: Release GitHub package
+        run: mvn --batch-mode deploy -P github
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CORREIOS_API_TOKEN: ${{ secrets.CORREIOS_API_TOKEN }}
-          CORREIOS_CARTAO_POSTAGEM: ${{ secrets.CORREIOS_CARTAO_POSTAGEM }}
-          CORREIOS_USER_ID: ${{ secrets.CORREIOS_USER_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
