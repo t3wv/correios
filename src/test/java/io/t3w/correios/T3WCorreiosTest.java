@@ -119,7 +119,7 @@ class T3WCorreiosTest {
     @Disabled
     @Test
     void testRequestPrepostagemInexistente() {
-        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagem("TJ134711047BR"));
+        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagemPostada(""));
     }
 
     @Disabled
@@ -150,7 +150,7 @@ class T3WCorreiosTest {
     @Disabled
     @Test
     void testListarPrepostagensErro() {
-        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagens(null, null, null, null, "999999", "PREPOSTADO", null, "TODOS", null, null));
+        Assertions.assertThrows(T3WCorreiosResponseDefault.class, () -> CORREIOS.consultarPrepostagens(null, null, null, null, null, null, null, "TODOS", null, null));
     }
 
     @Disabled
@@ -290,4 +290,23 @@ class T3WCorreiosTest {
         final T3WCorreiosFaturaProcessoAssincrono solicitacao = CORREIOS.solicitarExtratoAnaliticoFatura("0000000", "RE", DRSE_CONTRATO, "001");
         assertNotNull(solicitacao);
     }
+
+    @Disabled
+    @Test
+    void testBuscarPrepostagemByCodigoObjeto() throws T3WCorreiosResponseDefault, Exception {
+        final var codigoObjeto = "";
+        final var prepostagem = CORREIOS.consultarPrepostagemByCodigoObjeto(codigoObjeto);
+        assertTrue(prepostagem.isPresent());
+        assertEquals(codigoObjeto, prepostagem.get().getCodigoObjeto());
+    }
+
+    @Disabled
+    @Test
+    void testBuscarPrepostagemById() throws T3WCorreiosResponseDefault, Exception {
+        final var id = "";
+        final var prepostagem = CORREIOS.consultarPrepostagemById(id);
+        assertTrue(prepostagem.isPresent());
+        assertEquals(id, prepostagem.get().getId());
+    }
+
 }

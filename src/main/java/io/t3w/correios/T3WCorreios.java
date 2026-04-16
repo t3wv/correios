@@ -309,7 +309,7 @@ public class T3WCorreios implements T3WCorreiosLoggable {
      * @throws Exception                  Se ocorrer um erro durante o processo de consulta.
      * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado durante a consulta.
      */
-    public T3WCorreiosPrepostagemMovimentacao consultarPrepostagem(final String codigoObjeto) throws Exception, T3WCorreiosResponseDefault {
+    public T3WCorreiosPrepostagemMovimentacao consultarPrepostagemPostada(final String codigoObjeto) throws Exception, T3WCorreiosResponseDefault {
         final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/postada?codigoObjeto=%s".formatted(codigoObjeto));
         final var response = this.sendGetRequest(url);
 
@@ -320,6 +320,34 @@ public class T3WCorreios implements T3WCorreiosLoggable {
         } else {
             throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
         }
+    }
+
+    /**
+     * Método que consulta os dados de uma prepostagem através do id
+     * Esse método utiliza {@link T3WCorreios#consultarPrepostagens} e retorna o valor único atrelado ao id da prepostagem informada
+     *
+     * @param id id da prepostagem
+     * @return {@link T3WCorreiosPrepostagem}
+     * @throws T3WCorreiosResponseDefault
+     * @throws Exception
+     */
+    public Optional<T3WCorreiosPrepostagem> consultarPrepostagemById(String id) throws T3WCorreiosResponseDefault, Exception {
+        final var prepostagens = this.consultarPrepostagens(id, null, null,null,null,null,null,null,null, null);
+        return Optional.ofNullable(prepostagens.isEmpty() ? null : prepostagens.getFirst());
+    }
+
+    /**
+     * Método que consulta os dados de uma prepostagem através do código de envio
+     * Esse método utiliza {@link T3WCorreios#consultarPrepostagens} e retorna o valor único atrelado ao código de objeto informado
+     *
+     * @param codigoObjeto Código do objeto de envio
+     * @return {@link T3WCorreiosPrepostagem}
+     * @throws T3WCorreiosResponseDefault
+     * @throws Exception
+     */
+    public Optional<T3WCorreiosPrepostagem> consultarPrepostagemByCodigoObjeto(String codigoObjeto) throws T3WCorreiosResponseDefault, Exception {
+        final var prepostagens = this.consultarPrepostagens(null, codigoObjeto, null,null,null,null,null,null,null, null);
+        return Optional.ofNullable(prepostagens.isEmpty() ? null : prepostagens.getFirst());
     }
 
     /**
