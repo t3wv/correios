@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.t3w.correios.T3WCorreiosFormatoObjeto;
 import io.t3w.correios.T3WCorreiosPessoa;
+import io.t3w.correios.prepostagem.enums.T3WCorreiosPrepostagemStatus;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -120,6 +123,105 @@ public class T3WCorreiosPrepostagem {
 
     @JsonProperty("pedidoExternoOrigem")
     private String pedidoExternoOrigem;
+
+    @JsonProperty("servico")
+    private String servico;
+
+    @JsonProperty("descStatusAtual")
+    private String descStatusAtual;
+
+    @JsonProperty("codigoFormatoObjetoAferido")
+    private String codigoFormatoObjetoAferido;
+
+    @JsonProperty("tipoRotulo")
+    private String tipoRotulo;
+
+    @JsonProperty("nuColeta")
+    private String nuColeta;
+
+    @JsonProperty("sistemaOrigem")
+    private String sistemaOrigem;
+
+    @JsonProperty("valorTotalBens")
+    private Number valorTotalBens;
+
+    @JsonProperty("quantidade")
+    private Integer quantidade;
+
+    @JsonProperty("reciboSolicitacaoAssincrona")
+    private String reciboSolicitacaoAssincrona;
+
+    @JsonProperty("codigoFormatoObjetoPreAfericao")
+    private String codigoFormatoObjetoPreAfericao;
+
+    @JsonProperty("alturaPreAfericao")
+    private String alturaPreAfericao;
+
+    @JsonProperty("larguraPreAfericao")
+    private String larguraPreAfericao;
+
+    @JsonProperty("comprimentoPreAfericao")
+    private String comprimentoPreAfericao;
+
+    @JsonProperty("diametroPreAfericao")
+    private String diametroPreAfericao;
+
+    @JsonProperty("pesoPreAfericao")
+    private String pesoPreAfericao;
+
+    @JsonProperty("dataHoraPreAfericao")
+    private String dataHoraPreAfericao;
+
+    @JsonProperty("mcuUnidadePreAfericao")
+    private String mcuUnidadePreAfericao;
+
+    @JsonProperty("idBalancaCubagem")
+    private String idBalancaCubagem;
+
+    @JsonProperty("cepDestinoPreAfericao")
+    private String cepDestinoPreAfericao;
+
+    @JsonProperty("eticket")
+    private String eticket;
+
+    @JsonProperty("controleCliente")
+    private String controleCliente;
+
+    @JsonProperty("checkList")
+    private String checkList;
+
+    @JsonProperty("erroAssincrono")
+    private String erroAssincrono;
+
+    @JsonProperty("codigoEstampa2D")
+    private String codigoEstampa2D;
+
+    @JsonProperty("plp")
+    private Integer plp;
+
+    @JsonProperty("historicoStatus")
+    private List<T3WCorreiosPrepostagemHistoricoStatus> historicoStatus;
+
+    @JsonProperty("objetoCargo")
+    private String objetoCargo;
+
+    @JsonProperty("motivoCancelamento")
+    private String motivoCancelamento;
+
+    @JsonProperty("statusAtual")
+    private T3WCorreiosPrepostagemStatus statusAtual;
+
+    @JsonProperty("dataHoraStatusAtual")
+    private LocalDateTime dataHoraStatusAtual;
+
+    @JsonProperty("dataHora")
+    private LocalDateTime dataHora;
+
+    @JsonProperty("dataEticket")
+    private LocalDate dataEticket;
+
+    @JsonProperty("tipoObjeto")
+    private String tipoObjeto;
 
     public T3WCorreiosPrepostagem() {}
 
@@ -486,6 +588,303 @@ public class T3WCorreiosPrepostagem {
 
     public T3WCorreiosPrepostagem setPedidoExternoOrigem(String pedidoExternoOrigem) {
         this.pedidoExternoOrigem = pedidoExternoOrigem;
+        return this;
+    }
+
+    public String getServico() {
+        return servico;
+    }
+
+    public T3WCorreiosPrepostagem setServico(String servico) {
+        this.servico = servico;
+        return this;
+    }
+
+    public String getDescStatusAtual() {
+        return descStatusAtual;
+    }
+
+    public T3WCorreiosPrepostagem setDescStatusAtual(String descStatusAtual) {
+        this.descStatusAtual = descStatusAtual;
+        return this;
+    }
+
+    public String getCodigoFormatoObjetoAferido() {
+        return codigoFormatoObjetoAferido;
+    }
+
+    public T3WCorreiosPrepostagem setCodigoFormatoObjetoAferido(String codigoFormatoObjetoAferido) {
+        this.codigoFormatoObjetoAferido = codigoFormatoObjetoAferido;
+        return this;
+    }
+
+    public String getTipoRotulo() {
+        return tipoRotulo;
+    }
+
+    public T3WCorreiosPrepostagem setTipoRotulo(String tipoRotulo) {
+        this.tipoRotulo = tipoRotulo;
+        return this;
+    }
+
+    public String getNuColeta() {
+        return nuColeta;
+    }
+
+    public T3WCorreiosPrepostagem setNuColeta(String nuColeta) {
+        this.nuColeta = nuColeta;
+        return this;
+    }
+
+    public String getSistemaOrigem() {
+        return sistemaOrigem;
+    }
+
+    public T3WCorreiosPrepostagem setSistemaOrigem(String sistemaOrigem) {
+        this.sistemaOrigem = sistemaOrigem;
+        return this;
+    }
+
+    public Number getValorTotalBens() {
+        return valorTotalBens;
+    }
+
+    public T3WCorreiosPrepostagem setValorTotalBens(Number valorTotalBens) {
+        this.valorTotalBens = valorTotalBens;
+        return this;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public T3WCorreiosPrepostagem setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+        return this;
+    }
+
+    public String getReciboSolicitacaoAssincrona() {
+        return reciboSolicitacaoAssincrona;
+    }
+
+    public T3WCorreiosPrepostagem setReciboSolicitacaoAssincrona(String reciboSolicitacaoAssincrona) {
+        this.reciboSolicitacaoAssincrona = reciboSolicitacaoAssincrona;
+        return this;
+    }
+
+    public String getCodigoFormatoObjetoPreAfericao() {
+        return codigoFormatoObjetoPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setCodigoFormatoObjetoPreAfericao(String codigoFormatoObjetoPreAfericao) {
+        this.codigoFormatoObjetoPreAfericao = codigoFormatoObjetoPreAfericao;
+        return this;
+    }
+
+    public String getAlturaPreAfericao() {
+        return alturaPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setAlturaPreAfericao(String alturaPreAfericao) {
+        this.alturaPreAfericao = alturaPreAfericao;
+        return this;
+    }
+
+    public String getLarguraPreAfericao() {
+        return larguraPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setLarguraPreAfericao(String larguraPreAfericao) {
+        this.larguraPreAfericao = larguraPreAfericao;
+        return this;
+    }
+
+    public String getComprimentoPreAfericao() {
+        return comprimentoPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setComprimentoPreAfericao(String comprimentoPreAfericao) {
+        this.comprimentoPreAfericao = comprimentoPreAfericao;
+        return this;
+    }
+
+    public String getDiametroPreAfericao() {
+        return diametroPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setDiametroPreAfericao(String diametroPreAfericao) {
+        this.diametroPreAfericao = diametroPreAfericao;
+        return this;
+    }
+
+    public String getPesoPreAfericao() {
+        return pesoPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setPesoPreAfericao(String pesoPreAfericao) {
+        this.pesoPreAfericao = pesoPreAfericao;
+        return this;
+    }
+
+    public String getDataHoraPreAfericao() {
+        return dataHoraPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setDataHoraPreAfericao(String dataHoraPreAfericao) {
+        this.dataHoraPreAfericao = dataHoraPreAfericao;
+        return this;
+    }
+
+    public String getMcuUnidadePreAfericao() {
+        return mcuUnidadePreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setMcuUnidadePreAfericao(String mcuUnidadePreAfericao) {
+        this.mcuUnidadePreAfericao = mcuUnidadePreAfericao;
+        return this;
+    }
+
+    public String getIdBalancaCubagem() {
+        return idBalancaCubagem;
+    }
+
+    public T3WCorreiosPrepostagem setIdBalancaCubagem(String idBalancaCubagem) {
+        this.idBalancaCubagem = idBalancaCubagem;
+        return this;
+    }
+
+    public String getCepDestinoPreAfericao() {
+        return cepDestinoPreAfericao;
+    }
+
+    public T3WCorreiosPrepostagem setCepDestinoPreAfericao(String cepDestinoPreAfericao) {
+        this.cepDestinoPreAfericao = cepDestinoPreAfericao;
+        return this;
+    }
+
+    public String getEticket() {
+        return eticket;
+    }
+
+    public T3WCorreiosPrepostagem setEticket(String eticket) {
+        this.eticket = eticket;
+        return this;
+    }
+
+    public String getControleCliente() {
+        return controleCliente;
+    }
+
+    public T3WCorreiosPrepostagem setControleCliente(String controleCliente) {
+        this.controleCliente = controleCliente;
+        return this;
+    }
+
+    public String getCheckList() {
+        return checkList;
+    }
+
+    public T3WCorreiosPrepostagem setCheckList(String checkList) {
+        this.checkList = checkList;
+        return this;
+    }
+
+    public String getErroAssincrono() {
+        return erroAssincrono;
+    }
+
+    public T3WCorreiosPrepostagem setErroAssincrono(String erroAssincrono) {
+        this.erroAssincrono = erroAssincrono;
+        return this;
+    }
+
+    public String getCodigoEstampa2D() {
+        return codigoEstampa2D;
+    }
+
+    public T3WCorreiosPrepostagem setCodigoEstampa2D(String codigoEstampa2D) {
+        this.codigoEstampa2D = codigoEstampa2D;
+        return this;
+    }
+
+    public Integer getPlp() {
+        return plp;
+    }
+
+    public T3WCorreiosPrepostagem setPlp(Integer plp) {
+        this.plp = plp;
+        return this;
+    }
+
+    public List<T3WCorreiosPrepostagemHistoricoStatus> getHistoricoStatus() {
+        return historicoStatus;
+    }
+
+    public T3WCorreiosPrepostagem setHistoricoStatus(List<T3WCorreiosPrepostagemHistoricoStatus> historicoStatus) {
+        this.historicoStatus = historicoStatus;
+        return this;
+    }
+
+    public String getObjetoCargo() {
+        return objetoCargo;
+    }
+
+    public T3WCorreiosPrepostagem setObjetoCargo(String objetoCargo) {
+        this.objetoCargo = objetoCargo;
+        return this;
+    }
+
+    public String getMotivoCancelamento() {
+        return motivoCancelamento;
+    }
+
+    public T3WCorreiosPrepostagem setMotivoCancelamento(String motivoCancelamento) {
+        this.motivoCancelamento = motivoCancelamento;
+        return this;
+    }
+
+    public T3WCorreiosPrepostagemStatus getStatusAtual() {
+        return statusAtual;
+    }
+
+    public T3WCorreiosPrepostagem setStatusAtual(T3WCorreiosPrepostagemStatus statusAtual) {
+        this.statusAtual = statusAtual;
+        return this;
+    }
+
+    public LocalDateTime getDataHoraStatusAtual() {
+        return dataHoraStatusAtual;
+    }
+
+    public T3WCorreiosPrepostagem setDataHoraStatusAtual(LocalDateTime dataHoraStatusAtual) {
+        this.dataHoraStatusAtual = dataHoraStatusAtual;
+        return this;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public T3WCorreiosPrepostagem setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
+        return this;
+    }
+
+    public LocalDate getDataEticket() {
+        return dataEticket;
+    }
+
+    public T3WCorreiosPrepostagem setDataEticket(LocalDate dataEticket) {
+        this.dataEticket = dataEticket;
+        return this;
+    }
+
+    public String getTipoObjeto() {
+        return tipoObjeto;
+    }
+
+    public T3WCorreiosPrepostagem setTipoObjeto(String tipoObjeto) {
+        this.tipoObjeto = tipoObjeto;
         return this;
     }
 
