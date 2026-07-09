@@ -332,7 +332,7 @@ public class T3WCorreios implements T3WCorreiosLoggable {
      * @throws Exception
      */
     public Optional<T3WCorreiosPrepostagem> consultarPrepostagemById(String id) throws T3WCorreiosResponseDefault, Exception {
-        final var prepostagens = this.consultarPrepostagens(id, null, null,null,null,null,null,null,null, null);
+        final var prepostagens = this.consultarPrepostagens(id, null, null, null, null, null, null, null, null, null);
         return Optional.ofNullable(prepostagens.isEmpty() ? null : prepostagens.getFirst());
     }
 
@@ -346,7 +346,7 @@ public class T3WCorreios implements T3WCorreiosLoggable {
      * @throws Exception
      */
     public Optional<T3WCorreiosPrepostagem> consultarPrepostagemByCodigoObjeto(String codigoObjeto) throws T3WCorreiosResponseDefault, Exception {
-        final var prepostagens = this.consultarPrepostagens(null, codigoObjeto, null,null,null,null,null,null,null, null);
+        final var prepostagens = this.consultarPrepostagens(null, codigoObjeto, null, null, null, null, null, null, null, null);
         return Optional.ofNullable(prepostagens.isEmpty() ? null : prepostagens.getFirst());
     }
 
@@ -517,29 +517,35 @@ public class T3WCorreios implements T3WCorreiosLoggable {
      * @note O parâmetro {@code numeroCartaoPostagem} é opcional. Se informado, busca apenas os serviços disponíveis para este cartão.
      */
     public List<T3WCorreiosContratoServico> consultarServicosByContrato(String cnpj, String numeroContrato, String numeroCartaoPostagem) throws Exception, T3WCorreiosResponseDefault {
-        var page = 0;
         final var pageSize = 50;
         final var servicos = new ArrayList<T3WCorreiosContratoServico>();
+        final var uri = (urlBase + "/meucontrato/v1/empresas/%s/contratos/%s/servicos?nuCartaoPostagem=%s&page=%s&size=%s");
 
-        var uri = (urlBase + "/meucontrato/v1/empresas/%s/contratos/%s/servicos?nuCartaoPostagem=%s&page=%s&size=%s");
-        var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(numeroCartaoPostagem, ""), page, pageSize)));
+        var paginaAtual = 0;
+        var paginasTotais = -1;
+        do {
+            var response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(numeroCartaoPostagem, ""), paginaAtual, pageSize)));
 
-        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-            var responseParsed = this.objectMapper.readValue(response.body(), T3WCorreiosContratoResponseListagemServicosPaginado.class);
-            do {
-                servicos.addAll(responseParsed.getItens());
-                if (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages())) {
-                    page++;
-                    response = this.sendGetRequest(new URI(uri.formatted(cnpj, numeroContrato, Objects.toString(numeroCartaoPostagem, ""), page, pageSize)));
-                    responseParsed = this.objectMapper.readValue(response.body(), T3WCorreiosContratoResponseListagemServicosPaginado.class);
+            if(response == null){
+                throw new Exception("Erro inesperado durante a requisição - resposta nula");
+            }
+
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                final var responseParsed = this.objectMapper.readValue(response.body(), T3WCorreiosContratoResponseListagemServicosPaginado.class);
+                if (responseParsed != null && responseParsed.getPage() != null && responseParsed.getItens() != null && !responseParsed.getItens().isEmpty()) {
+                    //adiciona os itens parseados da lista de retorno
+                    servicos.addAll(responseParsed.getItens());
+
+                    //checo se existem mais paginas a serem checadas
+                    paginasTotais = responseParsed.getPage().getTotalPages() != null ? responseParsed.getPage().getTotalPages().intValue() : 0;
                 }
-            } while (!Objects.equals(responseParsed.getPage().getNumber(), responseParsed.getPage().getTotalPages()));
-            return servicos;
-        } else if (response.body() != null && !response.body().isBlank()) {
-            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
-        } else {
-            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
-        }
+            } else {
+                throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+            }
+
+            paginaAtual++;
+        } while (paginaAtual < paginasTotais);
+        return servicos;
     }
 
     /**
