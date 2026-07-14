@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Representa um item da declaração de conteúdo exigida na pré-postagem dos Correios.
@@ -51,7 +52,7 @@ public class T3WCorreiosPrepostagemItemDeclaracaoConteudo {
     public T3WCorreiosPrepostagemItemDeclaracaoConteudo(String conteudo, int quantidade, BigDecimal valor, int peso) {
         this.conteudo = conteudo;
         this.quantidade = quantidade;
-        this.valor = valor;
+        this.valor = normalizarValor(valor);
         this.peso = peso;
     }
 
@@ -78,7 +79,7 @@ public class T3WCorreiosPrepostagemItemDeclaracaoConteudo {
     }
 
     public T3WCorreiosPrepostagemItemDeclaracaoConteudo setValor(BigDecimal valor) {
-        this.valor = valor;
+        this.valor = normalizarValor(valor);
         return this;
     }
 
@@ -89,5 +90,9 @@ public class T3WCorreiosPrepostagemItemDeclaracaoConteudo {
     public T3WCorreiosPrepostagemItemDeclaracaoConteudo setPeso(int peso) {
         this.peso = peso;
         return this;
+    }
+
+    private static BigDecimal normalizarValor(BigDecimal valor) {
+        return valor != null ? valor.setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
     }
 }
