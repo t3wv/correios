@@ -7,7 +7,10 @@ import io.t3w.correios.faturas.T3WCorreiosFatura;
 import io.t3w.correios.faturas.T3WCorreiosFaturaProcessoAssincrono;
 import io.t3w.correios.faturas.enums.T3WCorreiosFaturasTipoPrevia;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemItemDeclaracaoConteudo;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoDace;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoDocumentoFiscal;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
+import io.t3w.correios.prepostagem.enums.T3WCorreiosPrepostagemTipoDace;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagem;
@@ -175,6 +178,43 @@ class T3WCorreiosTest {
         final FileOutputStream fos = new FileOutputStream("/tmp/%s".formatted("teste.pdf"));
         fos.write(pdfByteArray);
         fos.close();
+    }
+
+    @Disabled
+    @Test
+    void testGerarDace() throws Exception, T3WCorreiosResponseDefault {
+        // Somente para pré-postagens criadas com emiteDCe = "S"
+        final var requisicaoDace = new T3WCorreiosPrepostagemRequisicaoDace()
+                .setTipoDace(T3WCorreiosPrepostagemTipoDace.COMPLETA)
+                .setCodigosObjetos(List.of("AB033948628BR"));
+
+        final var dace = CORREIOS.gerarDace(requisicaoDace);
+        assertNotNull(dace);
+        assertNotNull(dace.getDados());
+    }
+
+    @Disabled
+    @Test
+    void testBaixarDace() throws Exception, T3WCorreiosResponseDefault {
+        // Somente para pré-postagens criadas com emiteDCe = "S"
+        final var requisicaoDace = new T3WCorreiosPrepostagemRequisicaoDace()
+                .setTipoDace(T3WCorreiosPrepostagemTipoDace.COMPLETA)
+                .setCodigosObjetos(List.of("AB033948628BR"));
+
+        // Tipos COMPLETA e RESUMIDA retornam o PDF, o tipo TERMICA retorna o texto para impressão direta
+        final var daceByteArray = CORREIOS.baixarDace(requisicaoDace);
+        assertTrue(daceByteArray.length > 0);
+
+        try (final var fos = new FileOutputStream("/tmp/%s".formatted("dace.pdf"))) {
+            fos.write(daceByteArray);
+        }
+    }
+
+    @Disabled
+    @Test
+    void testAtualizarDocumentoFiscal() {
+        final var requisicao = new T3WCorreiosPrepostagemRequisicaoDocumentoFiscal("AB033948628BR", "00000000000000000000000000000000000000000000");
+        assertDoesNotThrow(() -> CORREIOS.atualizarDocumentoFiscal(requisicao));
     }
 
     @Disabled

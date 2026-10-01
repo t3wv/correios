@@ -23,8 +23,12 @@ import io.t3w.correios.preco.T3WCorreiosPreco;
 import io.t3w.correios.preco.enums.T3WCorreiosPrecoServicoAdicional;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagem;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemMovimentacao;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoDace;
+import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoDocumentoFiscal;
 import io.t3w.correios.prepostagem.T3WCorreiosPrepostagemRequisicaoRotulo;
+import io.t3w.correios.prepostagem.enums.T3WCorreiosPrepostagemTipoDace;
 import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseCancelamento;
+import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseDace;
 import io.t3w.correios.prepostagem.responses.T3WCorreiosPrepostagemResponseListagemPaginado;
 import io.t3w.correios.rastreamento.T3WCorreiosSroObjeto;
 import io.t3w.correios.responses.T3WCorreiosResponseDefault;
@@ -186,6 +190,22 @@ public class T3WCorreios implements T3WCorreiosLoggable {
     private HttpResponse<String> sendDeleteRequest(final URI uri) throws Exception, T3WCorreiosResponseDefault {
         try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
             return client.send(HttpRequest.newBuilder().DELETE().uri(uri).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken()))).timeout(this.timeout).build(), HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    /**
+     * Método privado que envia uma solicitação PATCH para a API dos Correios com cabeçalho:
+     * <code>Content-Type application/json; charset=utf-8</code> e <code>Authorization Bearer {token}<code>.
+     *
+     * @param uri    URI para onde a solicitação será enviada.
+     * @param object Objeto que será enviado no corpo da solicitação como um JSON.
+     * @return Objeto {@link HttpResponse} contendo a resposta da API.
+     * @throws Exception Se ocorrer um erro durante o envio da solicitação.
+     * @note O tempo limite da solicitação é definido pelo valor de {@link #setTimeout(Duration)}}".
+     */
+    private HttpResponse<String> sendPatchRequest(final URI uri, final Object object) throws Exception, T3WCorreiosResponseDefault {
+        try (final var client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).followRedirects(HttpClient.Redirect.NORMAL).build()) {
+            return client.send(HttpRequest.newBuilder().method("PATCH", HttpRequest.BodyPublishers.ofString(this.objectMapper.writeValueAsString(object))).headers("Content-Type", "application/json; charset=utf-8", "Authorization", ("Bearer %s".formatted(this.requestBearerToken().getToken()))).timeout(this.timeout).uri(uri).build(), HttpResponse.BodyHandlers.ofString());
         }
     }
 
@@ -462,6 +482,67 @@ public class T3WCorreios implements T3WCorreiosLoggable {
             }
         }
         return new byte[0];
+    }
+
+    /**
+     * Método que gera os dados para impressão do DACE (Documento Auxiliar da Declaração de Conteúdo Eletrônica) de pré-postagens
+     * com DC-e emitida pelos Correios, ou seja, criadas com {@link T3WCorreiosPrepostagem#setEmiteDCe(String)} igual a "S".
+     *
+     * @param requisicao Objeto {@link T3WCorreiosPrepostagemRequisicaoDace} contendo os objetos ou as pré-postagens e o tipo de impressão do DACE.
+     * @return Objeto {@link T3WCorreiosPrepostagemResponseDace} contendo os objetos e os dados para impressão. Para os tipos
+     * {@link T3WCorreiosPrepostagemTipoDace#COMPLETA} e {@link T3WCorreiosPrepostagemTipoDace#RESUMIDA} os dados são o PDF em base64,
+     * para o tipo {@link T3WCorreiosPrepostagemTipoDace#TERMICA} são o texto para impressão direta.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public T3WCorreiosPrepostagemResponseDace gerarDace(T3WCorreiosPrepostagemRequisicaoDace requisicao) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/dce/dace/impressao");
+        final var response = sendPostRequest(url, requisicao);
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.objectMapper.readValue(response.body(), T3WCorreiosPrepostagemResponseDace.class);
+        } else if (response.body() != null && !response.body().isBlank()) {
+            throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+        } else {
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
+    }
+
+    /**
+     * Método que faz download do DACE gerado através do método {@link T3WCorreios#gerarDace(T3WCorreiosPrepostagemRequisicaoDace)}.
+     *
+     * @param requisicao Objeto {@link T3WCorreiosPrepostagemRequisicaoDace} contendo os objetos ou as pré-postagens e o tipo de impressão do DACE.
+     * @return Array de bytes contendo os dados do DACE: o PDF decodificado do base64 para os tipos {@link T3WCorreiosPrepostagemTipoDace#COMPLETA} e
+     * {@link T3WCorreiosPrepostagemTipoDace#RESUMIDA}, ou o texto para impressão direta em UTF-8 para o tipo {@link T3WCorreiosPrepostagemTipoDace#TERMICA}.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public byte[] baixarDace(T3WCorreiosPrepostagemRequisicaoDace requisicao) throws Exception, T3WCorreiosResponseDefault {
+        final var dace = this.gerarDace(requisicao);
+        if (dace.getDados() == null) {
+            return new byte[0];
+        }
+        if (requisicao.getTipoDace() == T3WCorreiosPrepostagemTipoDace.TERMICA) {
+            return dace.getDados().getBytes(StandardCharsets.UTF_8);
+        }
+        return Base64.getDecoder().decode(dace.getDados());
+    }
+
+    /**
+     * Método que atualiza uma pré-postagem com a chave de um documento fiscal (NF-e ou DC-e).
+     *
+     * @param requisicao Objeto {@link T3WCorreiosPrepostagemRequisicaoDocumentoFiscal} contendo o código do objeto e os dados do documento fiscal.
+     * @throws Exception                  Se ocorrer um erro durante o processo.
+     * @throws T3WCorreiosResponseDefault Se a API retornar um resultado inesperado.
+     */
+    public void atualizarDocumentoFiscal(T3WCorreiosPrepostagemRequisicaoDocumentoFiscal requisicao) throws Exception, T3WCorreiosResponseDefault {
+        final var url = new URI(urlBase + "/prepostagem/v1/prepostagens/dce");
+        final var response = sendPatchRequest(url, requisicao);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            if (response.body() != null && !response.body().isBlank()) {
+                throw this.objectMapper.readValue(response.body(), T3WCorreiosResponseDefault.class);
+            }
+            throw new Exception("Erro inesperado durante a requisição - '%s': '%s'".formatted(response.statusCode(), response.body()));
+        }
     }
 
     // contratos
